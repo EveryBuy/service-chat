@@ -1,0 +1,19 @@
+version: "3"
+services:
+
+  postgres:
+    image: 'postgres:latest'
+    container_name: chat
+    environment:
+      - POSTGRES_DB=chat
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5448:5432"
+    restart: unless-stopped
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data2
+
+volumes:
+  postgres_data:

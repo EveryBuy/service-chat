@@ -40,4 +40,8 @@ public class BlackListService {
         }
         blackListRepository.delete(blackListToDelete.get());
     }
+
+    public boolean isUserBlocked(long recipientId, long senderId){
+        return blackListRepository.existsBlackListByUserIdAndBlockedUserId(recipientId, senderId);
+    }
 }

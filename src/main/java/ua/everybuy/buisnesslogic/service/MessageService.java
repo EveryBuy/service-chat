@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.MessageRepository;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.UserIsBlockedException;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
 import ua.everybuy.routing.dto.mapper.MessageMapper;
 import ua.everybuy.routing.dto.request.MessageRequest;
 import ua.everybuy.routing.dto.response.StatusResponse;
@@ -38,7 +38,7 @@ public class MessageService {
         long sellerId = chat.getSellerId();
         long buyerId = chat.getBuyerId();
         if (blackListService.isUserBlocked(sellerId, buyerId) || blackListService.isUserBlocked(buyerId, sellerId)){
-            throw new UserIsBlockedException(Long.parseLong(principal.getName()));
+            throw new BlockUserException(Long.parseLong(principal.getName()));
         }
     }
 

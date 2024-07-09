@@ -20,6 +20,5 @@ public class MessageResponse implements SubResponseMarker {
     private LocalDateTime creationTime;
     private Long userId;
     private Long chatId;
-    private String imageUrl;
     private String fileUrl;
 }

@@ -30,9 +30,6 @@ public class Message {
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;
 
-    @Column(name = "image_url", length = 1000)
-    private String imageUrl;
-
     @Column(name = "file_url", length = 1000)
     private String fileUrl;
 

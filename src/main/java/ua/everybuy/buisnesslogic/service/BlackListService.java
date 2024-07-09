@@ -41,7 +41,13 @@ public class BlackListService {
         blackListRepository.delete(blackListToDelete.get());
     }
 
-    public boolean isUserBlocked(long recipientId, long senderId){
-        return blackListRepository.existsBlackListByUserIdAndBlockedUserId(recipientId, senderId);
+    public boolean checkBlock(long chatMemberIdFirst, long chatMemberIdSecond){
+        return isUserInBlackList(chatMemberIdFirst, chatMemberIdSecond)
+                || isUserInBlackList(chatMemberIdSecond, chatMemberIdFirst);
     }
+
+    public boolean isUserInBlackList(long checkingUserId, long checkedUserId){
+        return blackListRepository.existsBlackListByUserIdAndBlockedUserId(checkingUserId, checkedUserId);
+    }
+
 }

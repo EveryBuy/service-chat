@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Controller
 public class WebSocketController {
 
-//    @CrossOrigin("*")
-    @MessageMapping("/chat")
+    @CrossOrigin("*")
+    @MessageMapping("/sendMessage")
     @SendTo("/topic/messages")
     public String processMessage(String message) {
         System.out.println(message);

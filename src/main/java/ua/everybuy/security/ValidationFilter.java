@@ -77,7 +77,7 @@ public class ValidationFilter extends OncePerRequestFilter {
         return request.getRequestURI().startsWith("/swagger")
                 || request.getRequestURI().startsWith("/v3")
                 || request.getRequestURI().startsWith("/test")
-                || request.getRequestURI().startsWith("/chat");
+                || request.getRequestURI().startsWith("/qqq");
     }
 
 

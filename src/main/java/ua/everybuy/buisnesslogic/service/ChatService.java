@@ -18,12 +18,13 @@ import java.security.Principal;
 public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
+    private final BlackListService blackListService;
 
     public StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal){
         throwExcIfChatPresent(chatRequest, principal);
         long buyerId = Long.parseLong(principal.getName());
         Chat savedChat = chatRepository.save(chatMapper.mapRequestToChat(chatRequest, buyerId));
-        return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToResponse(savedChat));
+        return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
     }
 
     public Chat findChatById(Long id) {
@@ -37,5 +38,13 @@ public class ChatService {
         if (isPresent) {
             throw new ChatAlreadyExistsException();
         }
+    }
+
+    public StatusResponse getChat(Long chatId, Principal principal){
+        Chat chat = findChatById(chatId);
+        long checkingUserId = Long.parseLong(principal.getName());
+        long checkedUserId = checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
+        boolean isBlock = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
+        return new StatusResponse(HttpStatus.OK.value(), chatMapper.mapChatToChatResponse(chat, isBlock));
     }
 }

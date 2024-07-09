@@ -3,10 +3,7 @@ package ua.everybuy.routing.controler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.everybuy.buisnesslogic.service.ChatService;
 import ua.everybuy.routing.dto.request.ChatRequest;
 import ua.everybuy.routing.dto.response.StatusResponse;
@@ -24,5 +21,12 @@ public class ChatController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(chatService.createChatRoom(chatRequest, principal));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StatusResponse> getChat(@PathVariable long id, Principal principal){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(chatService.getChat(id, principal));
     }
 }

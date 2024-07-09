@@ -23,8 +23,9 @@ public class MessageService {
     private final MessageMapper messageMapper;
 
     public StatusResponse createMessage(MessageRequest messageRequest, Principal principal){
-        canUserSendMessage(messageRequest, principal);
-        Message message = messageMapper.convertRequestToMessage(messageRequest, Long.parseLong(principal.getName()));
+        validateMessageSendingPermission(messageRequest, principal);
+        Chat chat = chatService.findChatById(messageRequest.chatId());
+        Message message = messageMapper.convertRequestToMessage(messageRequest, Long.parseLong(principal.getName()), chat);
         messageRepository.save(message);
         return new StatusResponse(HttpStatus.CREATED.value(), messageMapper.convertMessageToResponse(message));
     }
@@ -33,11 +34,11 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    private void canUserSendMessage(MessageRequest messageRequest, Principal principal){
+    private void validateMessageSendingPermission(MessageRequest messageRequest, Principal principal){
         Chat chat = chatService.findChatById(messageRequest.chatId());
         long sellerId = chat.getSellerId();
         long buyerId = chat.getBuyerId();
-        if (blackListService.isUserBlocked(sellerId, buyerId) || blackListService.isUserBlocked(buyerId, sellerId)){
+        if (blackListService.checkBlock(sellerId, buyerId)){
             throw new BlockUserException(Long.parseLong(principal.getName()));
         }
     }

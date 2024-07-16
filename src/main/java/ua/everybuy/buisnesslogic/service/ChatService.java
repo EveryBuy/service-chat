@@ -47,4 +47,15 @@ public class ChatService {
         boolean isBlock = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper.mapChatToChatResponse(chat, isBlock));
     }
+
+    public Chat getChatByIdAndUserId(long chatId, Principal principal){
+        Chat chat = findChatById(chatId);
+        long userId = Long.parseLong(principal.getName());
+        if (chat.getSellerId() != userId
+                && chat.getBuyerId() != userId){
+            throw  new ChatNotFoundException(chatId, userId);
+        }
+
+        return chat;
+    }
 }

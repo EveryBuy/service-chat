@@ -8,6 +8,10 @@ public class ChatNotFoundException extends RuntimeException implements SubExcept
         super("Chat with id " + id + " not found.");
     }
 
+    public ChatNotFoundException (long chatId, long userId){
+        super("Chat with id: " + chatId + " and userId: " + userId + " not found.");
+    }
+
     @Override
     public int getStatusCode() {
         return HttpStatus.NOT_FOUND.value();

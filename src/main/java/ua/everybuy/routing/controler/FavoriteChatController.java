@@ -20,4 +20,11 @@ public class FavoriteChatController {
     public StatusResponse addChatToFavorite(@RequestParam(name = "chatId") long chatId, Principal principal){
         return favoriteChatService.addChatToFavorite(chatId, principal);
     }
+
+    @PostMapping("/remove-from-favorite")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeChatToFavorite(@RequestParam(name = "chatId") long chatId, Principal principal){
+        favoriteChatService.deleteChatFromFavorite(chatId, principal);
+
+    }
 }

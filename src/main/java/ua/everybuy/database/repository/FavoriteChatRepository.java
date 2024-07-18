@@ -7,5 +7,7 @@ import ua.everybuy.database.entity.FavoriteChat;
 
 @Repository
 public interface FavoriteChatRepository extends JpaRepository<FavoriteChat, Long> {
-    public boolean existsByUserIdAndChat(long userId, Chat chat);
+    boolean existsByUserIdAndChat(long userId, Chat chat);
+
+    FavoriteChat findFavoriteChatByUserIdAndChat(long userId, Chat chatId);
 }

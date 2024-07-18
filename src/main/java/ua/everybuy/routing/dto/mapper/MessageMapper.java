@@ -2,7 +2,6 @@ package ua.everybuy.routing.dto.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ua.everybuy.buisnesslogic.service.ChatService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.request.MessageRequest;

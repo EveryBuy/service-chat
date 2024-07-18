@@ -1,6 +1,5 @@
 package ua.everybuy.errorhandling;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

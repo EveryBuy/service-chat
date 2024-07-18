@@ -23,4 +23,8 @@ public class FavoriteChat {
         this.chat = chat;
         this.userId = userId;
     }
+
+    public FavoriteChat(){
+
+    }
 }

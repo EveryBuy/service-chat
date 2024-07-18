@@ -1,12 +1,8 @@
 package ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ua.everybuy.database.entity.Chat;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
 import java.time.LocalDateTime;

@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import ua.everybuy.buisnesslogic.util.RequestSenderService;
 import ua.everybuy.errorhandling.ErrorResponse;
-import ua.everybuy.errorhandling.MessageErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

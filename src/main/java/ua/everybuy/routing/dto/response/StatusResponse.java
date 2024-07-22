@@ -9,5 +9,5 @@ import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 @AllArgsConstructor
 public class StatusResponse {
     private int status;
-    SubResponseMarker data;
+    private SubResponseMarker data;
 }

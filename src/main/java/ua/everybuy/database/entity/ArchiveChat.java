@@ -1,17 +1,12 @@
 package ua.everybuy.database.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "favorite_chat")
-@Getter
-@Setter
+@Table(name = "archive_chat")
 @NoArgsConstructor
-public class FavoriteChat {
+public class ArchiveChat {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +19,7 @@ public class FavoriteChat {
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
-    public FavoriteChat(long userId, Chat chat){
+    public ArchiveChat(long userId, Chat chat){
         this.chat = chat;
         this.userId = userId;
     }

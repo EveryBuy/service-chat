@@ -17,13 +17,13 @@ public class FavoriteChatController {
     @PostMapping("/add-to-favorite")
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    public StatusResponse addChatToFavorite(@RequestParam(name = "chatId") long chatId, Principal principal){
+    public StatusResponse addChatToArchive(@RequestParam(name = "chatId") long chatId, Principal principal){
         return favoriteChatService.addChatToFavorite(chatId, principal);
     }
 
-    @PostMapping("/remove-from-favorite")
+    @DeleteMapping("/remove-from-favorite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeChatToFavorite(@RequestParam(name = "chatId") long chatId, Principal principal){
+    public void removeChatFromArchive(@RequestParam(name = "chatId") long chatId, Principal principal){
         favoriteChatService.deleteChatFromFavorite(chatId, principal);
 
     }

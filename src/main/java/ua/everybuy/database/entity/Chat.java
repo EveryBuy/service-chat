@@ -42,5 +42,8 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat")
     private List<FavoriteChat> favoriteChats;
+
+    @OneToMany(mappedBy = "chat")
+    private List<ArchiveChat> archiveChats;
 }
 

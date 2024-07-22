@@ -55,7 +55,10 @@ public class ChatService {
                 && chat.getBuyerId() != userId){
             throw  new ChatNotFoundException(chatId, userId);
         }
-
         return chat;
+    }
+
+    public void refreshChat(Chat chat){
+        chatRepository.save(chat);
     }
 }

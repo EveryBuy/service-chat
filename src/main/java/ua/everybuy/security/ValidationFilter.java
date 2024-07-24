@@ -6,6 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import ua.everybuy.buisnesslogic.util.RequestSenderService;
 import ua.everybuy.errorhandling.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,11 @@ import java.util.List;
 public class ValidationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     private final RequestSenderService requestSenderService;
+    private static final List<RequestMatcher> EXCLUDED_PATH_PATTERNS = List.of(
+            new AntPathRequestMatcher("/swagger/**"),
+            new AntPathRequestMatcher("/swagger-ui/**"),
+            new AntPathRequestMatcher("/v3/**"),
+            new AntPathRequestMatcher("/test/**"));
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -41,18 +48,16 @@ public class ValidationFilter extends OncePerRequestFilter {
         String userId;
         ValidRequest validRequest;
 
-        try{
+        try {
             ResponseEntity<ValidRequest> exchange = requestSenderService.doRequest(request);
-            System.out.println(exchange.getBody());
             validRequest = exchange.getBody();
-        }
-        catch (HttpClientErrorException e) {
-            int statusCode =  e.getStatusCode().value();
-            extractErrorMessage(response, e, statusCode);
+        } catch (HttpClientErrorException e) {
+            int statusCode = e.getStatusCode().value();
+            sendErrorMessage(response, e, statusCode);
             return;
         }
 
-        if(validRequest != null){
+        if (validRequest != null) {
             userId = String.valueOf(validRequest.data().userId());
             List<SimpleGrantedAuthority> grantedAuthorities = validRequest.data().roles()
                     .stream()
@@ -72,17 +77,15 @@ public class ValidationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    public boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().startsWith("/swagger")
-                || request.getRequestURI().startsWith("/v3")
-                || request.getRequestURI().startsWith("/test")
-                || request.getRequestURI().startsWith("/qqq");
+    public boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        return EXCLUDED_PATH_PATTERNS
+                .stream()
+                .anyMatch(pattern -> pattern.matches(request));
     }
 
-
-    private void extractErrorMessage(HttpServletResponse response, RuntimeException e, int statusCode) throws IOException {
+    private void sendErrorMessage(HttpServletResponse response, RuntimeException e, int statusCode) throws IOException {
         String message = statusCode == 401 ? "Unauthorized" : e.getMessage();
-        ua.everybuy.errorhandling.ErrorResponse errorResponse = new ErrorResponse(statusCode, message);
+        ErrorResponse errorResponse = new ErrorResponse(statusCode, message);
         String json = objectMapper.writeValueAsString(errorResponse);
         response.setStatus(statusCode);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

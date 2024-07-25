@@ -1,5 +1,8 @@
-package ua.everybuy.routing.controler;
+package ua.everybuy.routing.controler.chat.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,19 +14,19 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/chat")
 @RequiredArgsConstructor
-public class FavoriteChatController {
+public class FavoriteChatControllerImpl {
     private final FavoriteChatService favoriteChatService;
 
     @PostMapping("/add-to-favorite")
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    public StatusResponse addChatToArchive(@RequestParam(name = "chatId") long chatId, Principal principal){
+    public StatusResponse addChatToFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal){
         return favoriteChatService.addChatToFavorite(chatId, principal);
     }
 
     @DeleteMapping("/remove-from-favorite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeChatFromArchive(@RequestParam(name = "chatId") long chatId, Principal principal){
+    public void removeChatFromFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal){
         favoriteChatService.deleteChatFromFavorite(chatId, principal);
 
     }

@@ -1,4 +1,4 @@
-package ua.everybuy.routing.controler;
+package ua.everybuy.routing.controler.blacklist;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,19 +11,21 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat/black-list")
-public class BlackListController {
+public class BlackListControllerImpl implements BlackListController{
     private final BlackListService blackListService;
 
-    @PostMapping("/block/{blockedUserId}")
+    @Override
+    @PostMapping("/block")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public StatusResponse block(Principal principal, @PathVariable(name = "blockedUserId") long blockedUserId){
+    public StatusResponse block(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId){
         return blackListService.blockUser(principal, blockedUserId);
     }
 
-    @DeleteMapping("/unblock/{blockedUserId}")
+    @Override
+    @DeleteMapping("/unblock")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void unblock(Principal principal, @PathVariable(name = "blockedUserId") long blockedUserId){
+    public void unblock(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId){
          blackListService.unblockUser(principal, blockedUserId);
     }
 }

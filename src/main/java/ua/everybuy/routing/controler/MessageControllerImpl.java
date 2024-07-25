@@ -12,7 +12,7 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat/message")
-public class MessageController {
+public class MessageControllerImpl {
     private final MessageService messageService;
 
     @PostMapping("/create")

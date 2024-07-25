@@ -5,7 +5,7 @@ import ua.everybuy.errorhandling.exceptions.SubException;
 
 public class BlockNotFoundException extends RuntimeException implements SubException {
     public BlockNotFoundException(long userId, long blockedUserId){
-        super("The user with ID " + userId + " has not blocked the user with ID" + blockedUserId);
+        super("The user with ID " + userId + " has not blocked the user with ID " + blockedUserId);
     }
 
     @Override

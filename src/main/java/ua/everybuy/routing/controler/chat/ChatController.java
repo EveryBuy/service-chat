@@ -1,0 +1,52 @@
+package ua.everybuy.routing.controler.chat;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ua.everybuy.errorhandling.ErrorResponse;
+import ua.everybuy.routing.dto.request.ChatRequest;
+import ua.everybuy.routing.dto.response.StatusResponse;
+
+import java.security.Principal;
+
+public interface ChatController {
+    @Operation(summary = "Create chat")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Chat has been created",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StatusResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid input data",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Chat already exists",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+
+    })
+    public StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal);
+
+    @Operation(summary = "Get chat")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get chat by id",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StatusResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Missing or null chatId",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Chat not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    StatusResponse getChat(@RequestParam long id, Principal principal);
+}

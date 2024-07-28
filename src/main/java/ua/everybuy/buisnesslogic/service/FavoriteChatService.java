@@ -12,11 +12,9 @@ import ua.everybuy.routing.dto.response.StatusResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.AddToFavoriteResponse;
 
 import java.security.Principal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-// todo deploy
 // todo web socket
 // todo server setting
 public class FavoriteChatService {

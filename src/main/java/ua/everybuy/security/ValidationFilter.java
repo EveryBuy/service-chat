@@ -1,6 +1,7 @@
 package ua.everybuy.security;
 
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import ua.everybuy.buisnesslogic.util.RequestSenderService;
+import ua.everybuy.buisnesslogic.service.integration.RequestSenderService;
 import ua.everybuy.errorhandling.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -30,6 +31,8 @@ import java.util.List;
 public class ValidationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     private final RequestSenderService requestSenderService;
+    @Value("${auth.service.url}")
+    private String authServiceUrl;
     private static final List<RequestMatcher> EXCLUDED_PATH_PATTERNS = List.of(
             new AntPathRequestMatcher("/swagger/**"),
             new AntPathRequestMatcher("/swagger-ui/**"),
@@ -49,7 +52,7 @@ public class ValidationFilter extends OncePerRequestFilter {
         ValidRequest validRequest;
 
         try {
-            ResponseEntity<ValidRequest> exchange = requestSenderService.doRequest(request);
+            ResponseEntity<ValidRequest> exchange = requestSenderService.doRequest(request, authServiceUrl, ValidRequest.class);
             validRequest = exchange.getBody();
         } catch (HttpClientErrorException e) {
             int statusCode = e.getStatusCode().value();

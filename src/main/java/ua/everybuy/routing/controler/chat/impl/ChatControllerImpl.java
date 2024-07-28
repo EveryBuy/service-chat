@@ -3,7 +3,6 @@ package ua.everybuy.routing.controler.chat.impl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.buisnesslogic.service.ChatService;
 import ua.everybuy.routing.controler.chat.ChatController;

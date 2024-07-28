@@ -2,7 +2,7 @@ package ua.everybuy.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ua.everybuy.buisnesslogic.util.DateService;
+import ua.everybuy.buisnesslogic.service.util.DateService;
 
 import java.time.LocalDateTime;
 import java.util.List;

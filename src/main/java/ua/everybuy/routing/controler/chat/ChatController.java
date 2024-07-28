@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.request.ChatRequest;
@@ -31,7 +29,7 @@ public interface ChatController {
                             schema = @Schema(implementation = ErrorResponse.class)))
 
     })
-    public StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal);
+    StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal);
 
     @Operation(summary = "Get chat")
     @ApiResponses(value = {

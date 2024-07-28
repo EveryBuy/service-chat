@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.response.StatusResponse;
@@ -32,7 +31,7 @@ public interface FavoriteChatController {
                             schema = @Schema(implementation = ErrorResponse.class)))
 
     })
-    public StatusResponse addChatToFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal);
+    StatusResponse addChatToFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal);
 
     @Operation(summary = "Remove chat from favorite")
     @ApiResponses(value = {
@@ -50,5 +49,5 @@ public interface FavoriteChatController {
                             schema = @Schema(implementation = ErrorResponse.class))),
 
     })
-    public void removeChatFromFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal);
+    void removeChatFromFavorite(@RequestParam(name = "chatId") Long chatId, Principal principal);
 }

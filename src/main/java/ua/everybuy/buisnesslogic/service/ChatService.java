@@ -3,6 +3,7 @@ package ua.everybuy.buisnesslogic.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.repository.ChatRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatAlreadyExistsException;
@@ -19,10 +20,12 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
     private final BlackListService blackListService;
+    private final UserInfoService userInfoService;
 
     public StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal){
         throwExcIfChatPresent(chatRequest, principal);
         long buyerId = Long.parseLong(principal.getName());
+        System.out.println("userInfoService.getShortUserInfo(chatRequest.sellerId()) = " + userInfoService.getShortUserInfo(chatRequest.sellerId()));
         Chat savedChat = chatRepository.save(chatMapper.mapRequestToChat(chatRequest, buyerId));
         return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
     }

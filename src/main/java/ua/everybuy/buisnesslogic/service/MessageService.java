@@ -26,6 +26,7 @@ public class MessageService {
         validateMessageSendingPermission(messageRequest, principal);
         Chat chat = chatService.findChatById(messageRequest.chatId());
         Message message = messageMapper.convertRequestToMessage(messageRequest, Long.parseLong(principal.getName()), chat);
+        chatService.updateChat(chat);
         messageRepository.save(message);
         return new StatusResponse(HttpStatus.CREATED.value(), messageMapper.convertMessageToResponse(message));
     }

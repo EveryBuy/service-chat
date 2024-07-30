@@ -1,12 +1,10 @@
 package ua.everybuy.routing.controler.chat.impl;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.buisnesslogic.service.FavoriteChatService;
+import ua.everybuy.routing.controler.chat.FavoriteChatController;
 import ua.everybuy.routing.dto.response.StatusResponse;
 
 import java.security.Principal;
@@ -14,7 +12,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/chat")
 @RequiredArgsConstructor
-public class FavoriteChatControllerImpl {
+public class FavoriteChatControllerImpl  implements FavoriteChatController {
     private final FavoriteChatService favoriteChatService;
 
     @PostMapping("/add-to-favorite")

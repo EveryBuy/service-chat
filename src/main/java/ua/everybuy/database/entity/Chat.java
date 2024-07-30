@@ -2,7 +2,7 @@ package ua.everybuy.database.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ua.everybuy.buisnesslogic.util.DateService;
+import ua.everybuy.buisnesslogic.service.util.DateService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,18 +32,27 @@ public class Chat {
     @Column(name = "seller_id")
     private long sellerId;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updateDate;
+
+
     @PrePersist
     public void onCreate(){
-        creationDate = DateService.getDate(LocalDateTime.now());
+        creationDate = updateDate = DateService.getDate(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void onUpdate(){
+        updateDate =  DateService.getDate(LocalDateTime.now());
     }
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<Message> messages;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<FavoriteChat> favoriteChats;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<ArchiveChat> archiveChats;
 }
 

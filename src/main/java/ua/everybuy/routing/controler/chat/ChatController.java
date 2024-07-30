@@ -5,14 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.errorhandling.ErrorResponse;
-import ua.everybuy.routing.dto.request.ChatRequest;
 import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
+import java.util.List;
 
 public interface ChatController {
     @Operation(summary = "Create chat")
@@ -31,7 +30,7 @@ public interface ChatController {
                             schema = @Schema(implementation = ErrorResponse.class)))
 
     })
-    public StatusResponse createChatRoom(ChatRequest chatRequest, Principal principal);
+    StatusResponse createChatRoom(@RequestParam Long advertisementId, Principal principal);
 
     @Operation(summary = "Get chat")
     @ApiResponses(value = {
@@ -49,4 +48,16 @@ public interface ChatController {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     StatusResponse getChat(@RequestParam long id, Principal principal);
+
+    @Operation(summary = "Get all users chats")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get all users chats",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StatusResponse.class)) }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+
+    })
+    List<ChatResponseForList> getAllUsersChats(Principal principal);
 }

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.response.StatusResponse;
@@ -32,7 +31,7 @@ public interface BlackListController {
                             schema = @Schema(implementation = ErrorResponse.class)))
 
     })
-    public StatusResponse block(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId);
+    StatusResponse block(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId);
 
     @Operation(summary = "Unblock user")
     @ApiResponses(value = {
@@ -50,5 +49,5 @@ public interface BlackListController {
                             schema = @Schema(implementation = ErrorResponse.class))),
 
     })
-    public void unblock(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId);
+    void unblock(Principal principal, @RequestParam(name = "blockedUserId") long blockedUserId);
 }

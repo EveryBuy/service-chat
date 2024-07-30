@@ -1,9 +1,13 @@
 package ua.everybuy.database.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@AllArgsConstructor
 @Table(name = "archive_chat")
 @NoArgsConstructor
 public class ArchiveChat {

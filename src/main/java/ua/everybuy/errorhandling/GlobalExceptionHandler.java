@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ua.everybuy.errorhandling.exceptions.SubException;
 
@@ -50,6 +50,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         String.join("; ", errors)));
+    }
+
+    @ExceptionHandler(HttpStatusCodeException.class)
+    public ResponseEntity<ErrorResponse> handleHttpClientErrorException(HttpStatusCodeException ex){
+        return ResponseEntity
+                .status(ex.getStatusCode())
+                .body(new ErrorResponse(ex.getStatusCode().value(), ex.getMessage()));
+
     }
 
 }

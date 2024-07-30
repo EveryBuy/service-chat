@@ -32,18 +32,27 @@ public class Chat {
     @Column(name = "seller_id")
     private long sellerId;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updateDate;
+
+
     @PrePersist
     public void onCreate(){
-        creationDate = DateService.getDate(LocalDateTime.now());
+        creationDate = updateDate = DateService.getDate(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void onUpdate(){
+        updateDate =  DateService.getDate(LocalDateTime.now());
     }
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<Message> messages;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<FavoriteChat> favoriteChats;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<ArchiveChat> archiveChats;
 }
 

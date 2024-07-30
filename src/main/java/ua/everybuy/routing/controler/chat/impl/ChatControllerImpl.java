@@ -1,15 +1,15 @@
 package ua.everybuy.routing.controler.chat.impl;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.buisnesslogic.service.ChatService;
 import ua.everybuy.routing.controler.chat.ChatController;
-import ua.everybuy.routing.dto.request.ChatRequest;
 import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +21,8 @@ public class ChatControllerImpl implements ChatController {
     @PostMapping("/create")
     @ResponseBody()
     @ResponseStatus(HttpStatus.CREATED)
-    public StatusResponse createChatRoom(@RequestBody @Valid ChatRequest chatRequest, Principal principal){
-        return chatService.createChatRoom(chatRequest, principal);
+    public StatusResponse createChatRoom(@RequestParam Long advertisementId, Principal principal){
+        return chatService.createChatRoom(advertisementId, principal);
     }
 
     @Override
@@ -32,4 +32,12 @@ public class ChatControllerImpl implements ChatController {
     public StatusResponse getChat(@RequestParam long id, Principal principal){
         return chatService.getChat(id, principal);
     }
+
+    @GetMapping("/get-all-users-chats")
+    @ResponseBody()
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatResponseForList> getAllUsersChats(Principal principal){
+        return chatService.getAllUsersChats(principal);
+    }
+
 }

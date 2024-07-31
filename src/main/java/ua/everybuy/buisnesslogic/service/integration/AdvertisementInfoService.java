@@ -3,9 +3,10 @@ package ua.everybuy.buisnesslogic.service.integration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementNotFoundException;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementException;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 
 @Service
@@ -22,11 +23,26 @@ public class AdvertisementInfoService {
         try {
             shortAdvertisementInfoDto = requestSenderService.doRequest(fullUrl, ShortAdvertisementInfoDto.class).getBody();
         } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                throw new AdvertisementNotFoundException(advertisementId);
-            }
+            HttpStatusCode statusCode = e.getStatusCode();
+            throwExceptionIfAdvertisementNotFound(statusCode, advertisementId);
+            throwExceptionIfAdvertisementNotAvailable(statusCode, advertisementId);
             throw e;
         }
         return shortAdvertisementInfoDto;
     }
+
+    private void throwExceptionIfAdvertisementNotFound(HttpStatusCode statusCode, long advertisementId){
+        if (statusCode.equals(HttpStatus.NOT_FOUND)){
+            throw new AdvertisementException(statusCode.value(),
+                    "Advertisement with id " + advertisementId + " not found.");
+        }
+    }
+
+    private void throwExceptionIfAdvertisementNotAvailable(HttpStatusCode statusCode, long advertisementId){
+        if (statusCode.equals(HttpStatus.FORBIDDEN)){
+            throw new AdvertisementException(statusCode.value(),
+                    "Advertisement with id " + advertisementId + " not available.");
+        }
+    }
+
 }

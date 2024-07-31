@@ -35,17 +35,6 @@ public class Chat {
     @Column(name = "updated_at")
     private LocalDateTime updateDate;
 
-
-    @PrePersist
-    public void onCreate(){
-        creationDate = updateDate = DateService.getDate(LocalDateTime.now());
-    }
-
-    @PreUpdate
-    public void onUpdate(){
-        updateDate =  DateService.getDate(LocalDateTime.now());
-    }
-
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<Message> messages;
 
@@ -54,5 +43,14 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<ArchiveChat> archiveChats;
+
+    @PrePersist
+    public void onCreate(){
+        creationDate = updateDate = DateService.getDate(LocalDateTime.now());
+    }
+
+    public void setUpdateDate(LocalDateTime updateDate){
+        this.updateDate = DateService.getDate(updateDate);
+    }
 }
 

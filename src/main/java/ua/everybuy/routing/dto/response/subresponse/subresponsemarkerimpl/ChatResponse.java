@@ -17,6 +17,7 @@ public class ChatResponse implements SubResponseMarker {
     private long id;
     private long advertisementId;
     private LocalDateTime creationDate;
+    private LocalDateTime updateAt;
     private long buyerId;
     private long sellerId;
     private boolean isBlock;

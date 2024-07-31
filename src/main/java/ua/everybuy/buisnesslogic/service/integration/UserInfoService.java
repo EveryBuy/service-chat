@@ -3,6 +3,7 @@ package ua.everybuy.buisnesslogic.service.integration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.UserNotFoundException;
@@ -22,12 +23,19 @@ public class UserInfoService {
         try {
             statusResponse = requestSenderService.doRequest(fullUrl, UserStatusResponse.class).getBody();
         } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                throw new UserNotFoundException(userId);
-            }
+            throwExceptionIfUserNotFound(e.getStatusCode(), userId);
             throw e;
         }
         return statusResponse;
     }
 
+    public void ensureUserExists(long userId){
+        getShortUserInfo(userId);
+    }
+
+    private void throwExceptionIfUserNotFound(HttpStatusCode statusCode, long userId){
+        if (statusCode.equals(HttpStatus.NOT_FOUND)) {
+            throw new UserNotFoundException(userId);
+        }
+    }
 }

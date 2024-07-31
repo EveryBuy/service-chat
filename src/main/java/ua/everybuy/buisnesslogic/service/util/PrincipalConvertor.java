@@ -1,9 +1,7 @@
 package ua.everybuy.buisnesslogic.service.util;
 
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.UserNotFoundException;
-
 import java.security.Principal;
-
 
 public class PrincipalConvertor {
     public static long extractPrincipalId(Principal principal){

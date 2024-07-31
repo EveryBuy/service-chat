@@ -48,6 +48,7 @@ public class ChatMapper {
                 .id(chat.getId())
                 .advertisementId(chat.getAdvertisementId())
                 .creationDate(chat.getCreationDate())
+                .updateAt(chat.getUpdateDate())
                 .buyerId(chat.getBuyerId())
                 .sellerId(chat.getSellerId())
                 .isBlock(isBlock)

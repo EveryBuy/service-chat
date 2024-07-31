@@ -3,6 +3,8 @@ package ua.everybuy.buisnesslogic.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
+import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.BlackList;
 import ua.everybuy.database.repository.BlackListRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockAlreadyExistsException;
@@ -18,9 +20,12 @@ import java.util.Optional;
 public class BlackListService {
     private final BlackListRepository blackListRepository;
     private final BlackListMapper blackListMapper;
+    private final UserInfoService userInfoService;
+
 
     public StatusResponse blockUser(Principal principal, long blockedUserId){
-        long userId = Long.parseLong(principal.getName());
+        long userId = PrincipalConvertor.extractPrincipalId(principal);
+        userInfoService.ensureUserExists(blockedUserId);
 
         if (blackListRepository.existsBlackListByUserIdAndBlockedUserId(userId, blockedUserId)){
             throw new BlockAlreadyExistsException(userId, blockedUserId);
@@ -32,12 +37,16 @@ public class BlackListService {
     }
 
     public void unblockUser(Principal principal, long blockedUserId){
+        long userId = PrincipalConvertor.extractPrincipalId(principal);
+        userInfoService.ensureUserExists(blockedUserId);
+
         Optional<BlackList> blackListToDelete = blackListRepository
-                .findByUserIdAndBlockedUserId(Long.parseLong(principal.getName()), blockedUserId);
+                .findByUserIdAndBlockedUserId(userId, blockedUserId);
 
         if (blackListToDelete.isEmpty()){
-            throw new BlockNotFoundException(Long.parseLong(principal.getName()), blockedUserId);
+            throw new BlockNotFoundException(userId, blockedUserId);
         }
+
         blackListRepository.delete(blackListToDelete.get());
     }
 

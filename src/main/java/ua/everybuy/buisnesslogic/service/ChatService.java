@@ -9,6 +9,7 @@ import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.ChatRepository;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatAlreadyExistsException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatNotFoundException;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
@@ -18,6 +19,8 @@ import ua.everybuy.routing.dto.response.StatusResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +33,12 @@ public class ChatService {
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
 
-    public StatusResponse createChatRoom(Long advertisementId, Principal principal){
+    public StatusResponse createChat(Long advertisementId, Principal principal){
         ShortAdvertisementInfoDto advertisement = advertisementInfoService.getShortAdvertisementInfo(advertisementId);
         long buyerId = PrincipalConvertor.extractPrincipalId(principal);
         long sellerId = advertisement.getUserId();
         checkIfChatPresent(advertisementId, buyerId, sellerId);
-        ensureUserExists(sellerId);//if user not present UserNotFoundException will be thrown
+        userInfoService.ensureUserExists(sellerId);//if user not present UserNotFoundException will be thrown
         Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, buyerId, sellerId));
         return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
     }
@@ -62,8 +65,13 @@ public class ChatService {
         long checkedUserId = getSecondChatMember(checkingUserId, chat);
         boolean isBlock = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
         ShortUserInfoDto userData = userInfoService.getShortUserInfo(checkedUserId).getData();
-        ShortAdvertisementInfoDto shortAdvertisementInfo = advertisementInfoService
-                .getShortAdvertisementInfo(advertisementId);
+        ShortAdvertisementInfoDto shortAdvertisementInfo;
+        try {
+            shortAdvertisementInfo = advertisementInfoService
+                    .getShortAdvertisementInfo(advertisementId);
+        }catch (AdvertisementException ex){
+            shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
+        }
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
                 .mapChatToChatResponse(chat, isBlock, userData, shortAdvertisementInfo));
     }
@@ -75,28 +83,25 @@ public class ChatService {
     }
 
     public void updateChat(Chat chat){
+        chat.setUpdateDate(LocalDateTime.now());
         chatRepository.save(chat);
     }
 
     public List<ChatResponseForList> getAllUsersChats(Principal principal){
         long userId = PrincipalConvertor.extractPrincipalId(principal);
-        Message message = new Message();
-        message.setText("text");
 
         return chatRepository.findAllByUserIdOrderByUpdateDateDesc(userId)
                 .stream()
                 .map(chat -> chatMapper.mapToChatResponseForList(chat,
                         userInfoService.getShortUserInfo(getSecondChatMember(userId, chat)).getData(),
-                        message))
+                        chat.getMessages().stream().max(Comparator.comparing(Message::getCreationTime))
+                                .orElse(Message.builder().text("no messages yet").build())))
+
                 .collect(Collectors.toList());
     }
 
     private long getSecondChatMember(long checkingUserId, Chat chat){
        return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
-    }
-
-    private void ensureUserExists(long sellerId){
-        userInfoService.getShortUserInfo(sellerId);
     }
 
 }

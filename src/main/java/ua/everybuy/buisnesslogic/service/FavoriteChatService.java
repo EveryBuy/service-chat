@@ -15,8 +15,6 @@ import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
-// todo web socket
-// todo server setting
 public class FavoriteChatService {
     private final FavoriteChatRepository favoriteChatRepository;
     private final ChatService chatService;

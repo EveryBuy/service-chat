@@ -22,7 +22,7 @@ public class ChatControllerImpl implements ChatController {
     @ResponseBody()
     @ResponseStatus(HttpStatus.CREATED)
     public StatusResponse createChatRoom(@RequestParam Long advertisementId, Principal principal){
-        return chatService.createChatRoom(advertisementId, principal);
+        return chatService.createChat(advertisementId, principal);
     }
 
     @Override

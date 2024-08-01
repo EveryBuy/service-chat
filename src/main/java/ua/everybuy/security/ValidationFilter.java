@@ -37,6 +37,8 @@ public class ValidationFilter extends OncePerRequestFilter {
             new AntPathRequestMatcher("/swagger/**"),
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/v3/**"),
+            new AntPathRequestMatcher("/gs-guide-websocket"),
+            new AntPathRequestMatcher("/**"),
             new AntPathRequestMatcher("/test/**"));
 
     @Override

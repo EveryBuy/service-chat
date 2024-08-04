@@ -10,6 +10,7 @@ import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.ChatRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementException;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatAlreadyExistsException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatNotFoundException;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
@@ -34,9 +35,11 @@ public class ChatService {
     private final AdvertisementInfoService advertisementInfoService;
 
     public StatusResponse createChat(Long advertisementId, Principal principal){
-        ShortAdvertisementInfoDto advertisement = advertisementInfoService.getShortAdvertisementInfo(advertisementId);
         long buyerId = PrincipalConvertor.extractPrincipalId(principal);
-        long sellerId = advertisement.getUserId();
+        long sellerId = advertisementInfoService.getShortAdvertisementInfo(advertisementId).getUserId();
+        if (blackListService.isUserInBlackList(sellerId, buyerId)) {
+            throw new BlockUserException(buyerId);
+        }
         checkIfChatPresent(advertisementId, buyerId, sellerId);
         userInfoService.ensureUserExists(sellerId);//if user not present UserNotFoundException will be thrown
         Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, buyerId, sellerId));
@@ -59,11 +62,12 @@ public class ChatService {
     }
 
     public StatusResponse getChat(Long chatId, Principal principal){
-        Chat chat = findChatById(chatId);
+        Chat chat = getChatByIdAndUserId(chatId, principal);
         long advertisementId = chat.getAdvertisementId();
         long checkingUserId = PrincipalConvertor.extractPrincipalId(principal);
         long checkedUserId = getSecondChatMember(checkingUserId, chat);
-        boolean isBlock = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
+        boolean isAnotherUserBlocked = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
+        boolean isCurrentlyUserBlocked = blackListService.isUserInBlackList(checkedUserId, checkingUserId);
         ShortUserInfoDto userData = userInfoService.getShortUserInfo(checkedUserId).getData();
         ShortAdvertisementInfoDto shortAdvertisementInfo;
         try {
@@ -73,7 +77,7 @@ public class ChatService {
             shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
         }
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
-                .mapChatToChatResponse(chat, isBlock, userData, shortAdvertisementInfo));
+                .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat,  userData, shortAdvertisementInfo));
     }
 
     public Chat getChatByIdAndUserId(long chatId, Principal principal){

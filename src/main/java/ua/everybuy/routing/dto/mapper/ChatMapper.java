@@ -36,10 +36,11 @@ public class ChatMapper {
                 .build();
     }
 
-    public ChatResponse mapChatToChatResponse(Chat chat,
-                                              boolean isBlock,
-                                              ShortUserInfoDto shortUserInfoDto,
-                                              ShortAdvertisementInfoDto shortAdvertisementInfo) {
+    public ChatResponse mapChatToChatResponse(boolean  isAnotherUserBlocked,
+            boolean isCurrentlyUserBlocked,
+            Chat chat,
+            ShortUserInfoDto shortUserInfoDto,
+            ShortAdvertisementInfoDto shortAdvertisementInfo) {
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
                 .toList();
@@ -51,7 +52,8 @@ public class ChatMapper {
                 .updateAt(chat.getUpdateDate())
                 .buyerId(chat.getBuyerId())
                 .sellerId(chat.getSellerId())
-                .isBlock(isBlock)
+                .isAnotherUserBlocked(isAnotherUserBlocked)
+                .isCurrentlyUserBlocked(isCurrentlyUserBlocked)
                 .chatMessages(messageResponses)
                 .userData(shortUserInfoDto)
                 .shortAdvertisementInfo(shortAdvertisementInfo)

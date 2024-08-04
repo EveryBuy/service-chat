@@ -20,7 +20,8 @@ public class ChatResponse implements SubResponseMarker {
     private LocalDateTime updateAt;
     private long buyerId;
     private long sellerId;
-    private boolean isBlock;
+    private boolean isAnotherUserBlocked;
+    private boolean isCurrentlyUserBlocked;
     private List<MessageResponse> chatMessages;
     private ShortUserInfoDto userData;
     private ShortAdvertisementInfoDto shortAdvertisementInfo;

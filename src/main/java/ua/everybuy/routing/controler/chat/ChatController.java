@@ -47,7 +47,7 @@ public interface ChatController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    StatusResponse getChat(@RequestParam long id, Principal principal);
+    StatusResponse getChat(@PathVariable long id, Principal principal);
 
     @Operation(summary = "Get all users chats")
     @ApiResponses(value = {

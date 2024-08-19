@@ -1,19 +1,16 @@
 package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ua.everybuy.buisnesslogic.service.util.DateService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.MessageRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
 import ua.everybuy.routing.dto.mapper.MessageMapper;
 import ua.everybuy.routing.dto.request.MessageRequest;
-import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
 import java.security.Principal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,21 +20,17 @@ public class MessageService {
     private final BlackListService blackListService;
     private final MessageMapper messageMapper;
 
-    public StatusResponse createMessage(MessageRequest messageRequest, Principal principal){
-        validateMessageSendingPermission(messageRequest, principal);
-        Chat chat = chatService.findChatById(messageRequest.chatId());
+    public MessageResponse createMessage(long chatId, MessageRequest messageRequest, Principal principal){
+        validateMessageSendingPermission(chatId, principal);
+        Chat chat = chatService.findChatById(chatId);
         Message message = messageMapper.convertRequestToMessage(messageRequest, Long.parseLong(principal.getName()), chat);
         chatService.updateChat(chat);
         messageRepository.save(message);
-        return new StatusResponse(HttpStatus.CREATED.value(), messageMapper.convertMessageToResponse(message));
+        return messageMapper.convertMessageToResponse(message);
     }
 
-    public List<Message> getAllMessages(){
-        return messageRepository.findAll();
-    }
-
-    private void validateMessageSendingPermission(MessageRequest messageRequest, Principal principal){
-        Chat chat = chatService.findChatById(messageRequest.chatId());
+    private void validateMessageSendingPermission(long chatId, Principal principal){
+        Chat chat = chatService.findChatById(chatId);
         long sellerId = chat.getSellerId();
         long buyerId = chat.getBuyerId();
         if (blackListService.checkBlock(sellerId, buyerId)){

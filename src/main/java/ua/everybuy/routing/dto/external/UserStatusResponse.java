@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
-import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
 @Getter
 @Setter

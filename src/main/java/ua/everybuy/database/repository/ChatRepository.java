@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    Optional<Chat> findByAdvertisementIdAndSellerIdAndBuyerId(long advertisementId, long buyerId, long sellerId);
     boolean existsChatByAdvertisementIdAndBuyerIdAndSellerId(long advertisementId, long buyerId, long sellerId);
     @Query("SELECT c FROM Chat c WHERE c.buyerId = :userId OR c.sellerId = :userId ORDER BY c.updateDate DESC")
     List<Chat> findAllByUserIdOrderByUpdateDateDesc(@Param("userId") long userId);

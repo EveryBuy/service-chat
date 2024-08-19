@@ -26,11 +26,11 @@ public class ChatControllerImpl implements ChatController {
     }
 
     @Override
-    @GetMapping
+    @GetMapping("/{chatId}")
     @ResponseBody()
     @ResponseStatus(HttpStatus.OK)
-    public StatusResponse getChat(@RequestParam long id, Principal principal){
-        return chatService.getChat(id, principal);
+    public StatusResponse getChat(@PathVariable long chatId, Principal principal){
+        return chatService.getChat(chatId, principal);
     }
 
     @GetMapping("/get-all-users-chats")

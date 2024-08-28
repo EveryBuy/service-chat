@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class MessageResponse implements SubResponseMarker {
+public class FileResponse implements SubResponseMarker {
     private Long id;
-    private String text;
+    private String fileUrl;
     private LocalDateTime creationTime;
     private Long userId;
     private Long chatId;

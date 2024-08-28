@@ -39,6 +39,9 @@ public class Chat {
     private List<Message> messages;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<FileUrl> fileUrls;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<FavoriteChat> favoriteChats;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)

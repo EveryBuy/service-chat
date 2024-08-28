@@ -104,7 +104,7 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    private long getSecondChatMember(long checkingUserId, Chat chat){
+    public long getSecondChatMember(long checkingUserId, Chat chat){
        return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
     }
 

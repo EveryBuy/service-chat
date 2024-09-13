@@ -1,5 +1,7 @@
 package ua.everybuy.routing.dto.response.subresponse;
 
-public interface SubResponseMarker {
+import java.io.Serializable;
+
+public interface SubResponseMarker extends Serializable {
 
 }

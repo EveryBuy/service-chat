@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-public class ShortAdvertisementInfoDto {
+public class ShortAdvertisementInfoDto implements Serializable {
     private Long id;
     private String title;
     private String price;

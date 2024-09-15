@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserStatusResponse {
+public class UserStatusResponse implements Serializable {
     private int status;
     private ShortUserInfoDto data;
 

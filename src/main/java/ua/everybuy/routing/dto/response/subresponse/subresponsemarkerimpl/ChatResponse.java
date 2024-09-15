@@ -7,13 +7,14 @@ import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class ChatResponse implements SubResponseMarker {
+public class ChatResponse implements SubResponseMarker, Serializable {
     private long id;
     private long advertisementId;
     private LocalDateTime creationDate;

@@ -1,6 +1,7 @@
 package ua.everybuy.routing.dto.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
@@ -11,6 +12,7 @@ import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatRe
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.CreateChatResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Component
@@ -36,11 +38,13 @@ public class ChatMapper {
                 .build();
     }
 
+    @Cacheable(value = "chatResponseCacheRedis", key = "#chat.id")
     public ChatResponse mapChatToChatResponse(boolean  isAnotherUserBlocked,
             boolean isCurrentlyUserBlocked,
             Chat chat,
             ShortUserInfoDto shortUserInfoDto,
             ShortAdvertisementInfoDto shortAdvertisementInfo) {
+        System.out.println("Cache doesn't work, method executed");
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
                 .toList();

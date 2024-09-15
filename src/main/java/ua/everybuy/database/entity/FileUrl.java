@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ua.everybuy.buisnesslogic.service.util.DateService;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileUrl {
+public class FileUrl implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name =  "id")

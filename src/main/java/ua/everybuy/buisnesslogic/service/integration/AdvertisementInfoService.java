@@ -2,6 +2,7 @@ package ua.everybuy.buisnesslogic.service.integration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,9 @@ public class AdvertisementInfoService {
     @Value("${ad.service.url}")
     private String advertisementInfoUrl;
 
+    @Cacheable(key = "#advertisementId", value = "shortAdvertisementInfo")
     public ShortAdvertisementInfoDto getShortAdvertisementInfo(long advertisementId) {
+
         String fullUrl = advertisementInfoUrl + "/" +  advertisementId + ADVERTISEMENT_INFO_ENDPOINT;
         ShortAdvertisementInfoDto shortAdvertisementInfoDto;
         try {
@@ -28,6 +31,7 @@ public class AdvertisementInfoService {
             throwExceptionIfAdvertisementNotAvailable(statusCode, advertisementId);
             throw e;
         }
+        System.out.println("inside getShortAdvertisementInfo method, cache doesn't work");
         return shortAdvertisementInfoDto;
     }
 

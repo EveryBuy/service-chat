@@ -2,6 +2,7 @@ package ua.everybuy.buisnesslogic.service.integration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,14 @@ public class UserInfoService {
     @Value("${user.service.url}")
     private String userInfoUrl;
 
+    @Cacheable(key = "#userId", value = "userInfo")
     public UserStatusResponse getShortUserInfo(long userId) {
         String fullUrl = userInfoUrl + USER_INFO_ENDPOINT + userId;
         UserStatusResponse statusResponse;
+        System.out.println("inside getShortUserInfo method cache doesn't work");
         try {
             statusResponse = requestSenderService.doRequest(fullUrl, UserStatusResponse.class).getBody();
+            System.out.println(statusResponse);
         } catch (HttpStatusCodeException e) {
             throwExceptionIfUserNotFound(e.getStatusCode(), userId);
             throw e;

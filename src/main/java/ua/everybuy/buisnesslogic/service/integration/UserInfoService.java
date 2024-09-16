@@ -20,6 +20,23 @@ public class UserInfoService {
 
     @Cacheable(key = "#userId", value = "userInfo")
     public UserStatusResponse getShortUserInfo(long userId) {
+
+        System.out.println("inside getShortUserInfo method cache doesn't work");
+
+        return extractUserInfo(userId);
+    }
+
+    public void ensureUserExists(long userId){
+        getShortUserInfo(userId);
+    }
+
+    private void throwExceptionIfUserNotFound(HttpStatusCode statusCode, long userId){
+        if (statusCode.equals(HttpStatus.NOT_FOUND)) {
+            throw new UserNotFoundException(userId);
+        }
+    }
+
+    public UserStatusResponse extractUserInfo(long userId){
         String fullUrl = userInfoUrl + USER_INFO_ENDPOINT + userId;
         UserStatusResponse statusResponse;
         System.out.println("inside getShortUserInfo method cache doesn't work");
@@ -31,15 +48,5 @@ public class UserInfoService {
             throw e;
         }
         return statusResponse;
-    }
-
-    public void ensureUserExists(long userId){
-        getShortUserInfo(userId);
-    }
-
-    private void throwExceptionIfUserNotFound(HttpStatusCode statusCode, long userId){
-        if (statusCode.equals(HttpStatus.NOT_FOUND)) {
-            throw new UserNotFoundException(userId);
-        }
     }
 }

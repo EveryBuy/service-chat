@@ -20,19 +20,8 @@ public class AdvertisementInfoService {
 
     @Cacheable(key = "#advertisementId", value = "shortAdvertisementInfo")
     public ShortAdvertisementInfoDto getShortAdvertisementInfo(long advertisementId) {
-
-        String fullUrl = advertisementInfoUrl + "/" +  advertisementId + ADVERTISEMENT_INFO_ENDPOINT;
-        ShortAdvertisementInfoDto shortAdvertisementInfoDto;
-        try {
-            shortAdvertisementInfoDto = requestSenderService.doRequest(fullUrl, ShortAdvertisementInfoDto.class).getBody();
-        } catch (HttpStatusCodeException e) {
-            HttpStatusCode statusCode = e.getStatusCode();
-            throwExceptionIfAdvertisementNotFound(statusCode, advertisementId);
-            throwExceptionIfAdvertisementNotAvailable(statusCode, advertisementId);
-            throw e;
-        }
         System.out.println("inside getShortAdvertisementInfo method, cache doesn't work");
-        return shortAdvertisementInfoDto;
+        return extractAdvertisementInfo(advertisementId);
     }
 
     private void throwExceptionIfAdvertisementNotFound(HttpStatusCode statusCode, long advertisementId){
@@ -47,6 +36,20 @@ public class AdvertisementInfoService {
             throw new AdvertisementException(statusCode.value(),
                     "Advertisement with id " + advertisementId + " not available.");
         }
+    }
+
+    private ShortAdvertisementInfoDto extractAdvertisementInfo(long advertisementId){
+        String fullUrl = advertisementInfoUrl + "/" +  advertisementId + ADVERTISEMENT_INFO_ENDPOINT;
+        ShortAdvertisementInfoDto shortAdvertisementInfoDto;
+        try {
+            shortAdvertisementInfoDto = requestSenderService.doRequest(fullUrl, ShortAdvertisementInfoDto.class).getBody();
+        } catch (HttpStatusCodeException e) {
+            HttpStatusCode statusCode = e.getStatusCode();
+            throwExceptionIfAdvertisementNotFound(statusCode, advertisementId);
+            throwExceptionIfAdvertisementNotAvailable(statusCode, advertisementId);
+            throw e;
+        }
+        return shortAdvertisementInfoDto;
     }
 
 }

@@ -16,9 +16,9 @@ public class ChangeUserInfoController {
 
     @PostMapping("/change")
     @CachePut(key = "#userInfo.getData().userId()", value = "userInfo")
-    public ResponseEntity<Void> changeUserInfo(@RequestBody UserStatusResponse userInfo){
+    public UserStatusResponse changeUserInfo(@RequestBody UserStatusResponse userInfo){
         System.out.println(userInfo);
         System.out.println("changeUserInfo METHOD EXECUTED");
-        return ResponseEntity.ok().build();
+        return userInfo;
     }
 }

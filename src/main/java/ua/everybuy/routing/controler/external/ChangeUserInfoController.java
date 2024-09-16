@@ -14,7 +14,7 @@ import ua.everybuy.routing.dto.external.UserStatusResponse;
 @RequestMapping("/chat/user")
 public class ChangeUserInfoController {
 
-    @PostMapping("/chane")
+    @PostMapping("/change")
     @CachePut(key = "#userInfo.getData().userId()", value = "userInfo")
     public ResponseEntity<Void> changeUserInfo(@RequestBody UserStatusResponse userInfo){
         System.out.println(userInfo);

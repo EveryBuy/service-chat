@@ -1,6 +1,7 @@
 package ua.everybuy.routing.controler.message;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -31,12 +32,13 @@ public class MessageControllerImpl implements MessageController{
         return response;
     }
 
-//    Method for aws s3 testing
+    @PostMapping("/chat/{chatId}/send-message")
+    @ResponseBody()
+    @ResponseStatus(HttpStatus.CREATED)
+    public MessageResponse sendMessage(@PathVariable long chatId, @RequestBody MessageRequest message, Principal principal) {
+        MessageResponse response = messageService.createMessage(chatId, message, principal);
+        System.out.println(response);
+        return response;
+    }
 
-//    @PostMapping("/send-file")
-//    public String sendFile(@RequestParam MultipartFile file, Principal principal) throws IOException {
-//        messageService.createMessage(15,
-//                new MessageRequest("test message s3", awsS3Service.uploadFile(file)), principal);
-//        return awsS3Service.uploadFile(file);
-//    }
 }

@@ -9,10 +9,7 @@ import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.ChatRepository;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementException;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatAlreadyExistsException;
-import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatNotFoundException;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.*;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
@@ -41,6 +38,7 @@ public class ChatService {
             throw new BlockUserException(buyerId);
         }
         checkIfChatPresent(advertisementId, buyerId, sellerId);
+        checkIfBuyerIsAdOwner(buyerId, sellerId);
         userInfoService.ensureUserExists(sellerId);//if user not present UserNotFoundException will be thrown
         Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, buyerId, sellerId));
         return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
@@ -58,6 +56,12 @@ public class ChatService {
 
         if (isPresent) {
             throw new ChatAlreadyExistsException();
+        }
+    }
+
+    private void checkIfBuyerIsAdOwner(long userId, long buyerId){
+        if (userId == buyerId){
+            throw new SelfChatCreationException(userId);
         }
     }
 

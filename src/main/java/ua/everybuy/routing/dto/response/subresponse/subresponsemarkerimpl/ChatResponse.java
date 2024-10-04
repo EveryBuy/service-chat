@@ -1,23 +1,23 @@
 package ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class ChatResponse implements SubResponseMarker {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatResponse implements SubResponseMarker, Serializable {
     private long id;
     private long advertisementId;
-    private LocalDateTime creationDate;
-    private LocalDateTime updateAt;
+    private String creationDate;
+    private String updateAt;
     private long buyerId;
     private long sellerId;
     private boolean isAnotherUserBlocked;

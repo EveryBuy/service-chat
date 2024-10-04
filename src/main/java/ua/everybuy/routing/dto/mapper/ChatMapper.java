@@ -36,11 +36,13 @@ public class ChatMapper {
                 .build();
     }
 
+//    @Cacheable(value = "chatResponseCacheRedis", key = "#chat.id")
     public ChatResponse mapChatToChatResponse(boolean  isAnotherUserBlocked,
             boolean isCurrentlyUserBlocked,
             Chat chat,
             ShortUserInfoDto shortUserInfoDto,
             ShortAdvertisementInfoDto shortAdvertisementInfo) {
+        System.out.println("Cache doesn't work mapChatToChatResponse, method executed");
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
                 .toList();
@@ -48,8 +50,8 @@ public class ChatMapper {
         return ChatResponse.builder()
                 .id(chat.getId())
                 .advertisementId(chat.getAdvertisementId())
-                .creationDate(chat.getCreationDate())
-                .updateAt(chat.getUpdateDate())
+                .creationDate(chat.getCreationDate().toString())
+                .updateAt(chat.getUpdateDate().toString())
                 .buyerId(chat.getBuyerId())
                 .sellerId(chat.getSellerId())
                 .isAnotherUserBlocked(isAnotherUserBlocked)

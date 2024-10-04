@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class ChatResponse implements SubResponseMarker, Serializable {
     private long id;
     private long advertisementId;

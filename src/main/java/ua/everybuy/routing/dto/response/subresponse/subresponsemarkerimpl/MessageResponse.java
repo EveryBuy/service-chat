@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
-public class MessageResponse implements SubResponseMarker {
+public class MessageResponse implements SubResponseMarker, Serializable {
     private Long id;
     private String text;
     private LocalDateTime creationTime;

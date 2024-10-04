@@ -1,7 +1,9 @@
 package ua.everybuy.routing.dto.external.model;
 
 
-public record ShortUserInfoDto(long userId,
+import java.io.Serializable;
+
+public record ShortUserInfoDto (long userId,
                                String fullName,
-                               String photoUrl) {
+                               String photoUrl) implements Serializable {
 }

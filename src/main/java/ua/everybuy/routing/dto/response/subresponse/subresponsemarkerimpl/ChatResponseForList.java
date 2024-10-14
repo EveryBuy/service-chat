@@ -15,4 +15,5 @@ public class ChatResponseForList {
     private ShortUserInfoDto userData;
     private String lastMessage;
     private LocalDateTime lastMessageDate;
+    private String section;
 }

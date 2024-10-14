@@ -41,7 +41,8 @@ public class ChatMapper {
             boolean isCurrentlyUserBlocked,
             Chat chat,
             ShortUserInfoDto shortUserInfoDto,
-            ShortAdvertisementInfoDto shortAdvertisementInfo) {
+            ShortAdvertisementInfoDto shortAdvertisementInfo,
+                                              String section) {
         System.out.println("Cache doesn't work mapChatToChatResponse, method executed");
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
@@ -59,15 +60,20 @@ public class ChatMapper {
                 .chatMessages(messageResponses)
                 .userData(shortUserInfoDto)
                 .shortAdvertisementInfo(shortAdvertisementInfo)
+                .section(section)
                 .build();
     }
 
-    public ChatResponseForList mapToChatResponseForList(Chat chat, ShortUserInfoDto userData, Message message) {
+    public ChatResponseForList mapToChatResponseForList(Chat chat,
+                                                        ShortUserInfoDto userData,
+                                                        Message message,
+                                                        String section) {
         return ChatResponseForList.builder()
                 .chatId(chat.getId())
                 .userData(userData)
                 .lastMessage(message.getText())
                 .lastMessageDate(chat.getUpdateDate())
+                .section(section)
                 .build();
     }
 }

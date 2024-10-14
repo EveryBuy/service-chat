@@ -40,4 +40,18 @@ public class ChatControllerImpl implements ChatController {
         return chatService.getAllUsersChats(principal);
     }
 
+    @GetMapping("/get-buy-users-chats")
+    @ResponseBody()
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatResponseForList> getBuyUsersChats(Principal principal){
+        return chatService.getBuyUsersChats(principal);
+    }
+
+    @GetMapping("/get-sell-users-chats")
+    @ResponseBody()
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatResponseForList> getSellUsersChats(Principal principal){
+        return chatService.getSellUsersChats(principal);
+    }
+
 }

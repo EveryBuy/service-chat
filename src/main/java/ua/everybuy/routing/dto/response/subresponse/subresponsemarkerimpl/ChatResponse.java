@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ChatResponse implements SubResponseMarker, Serializable {
     private long id;
+    private String section;
     private long advertisementId;
     private String creationDate;
     private String updateAt;

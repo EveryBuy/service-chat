@@ -80,8 +80,9 @@ public class ChatService {
         }catch (AdvertisementException ex){
             shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
         }
+        String section = getChatSection(shortAdvertisementInfo, checkingUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
-                .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat,  userData, shortAdvertisementInfo));
+                .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat,  userData, shortAdvertisementInfo, section));
     }
 
     public Chat getChatByIdAndUserId(long chatId, Principal principal){
@@ -103,13 +104,29 @@ public class ChatService {
                 .map(chat -> chatMapper.mapToChatResponseForList(chat,
                         userInfoService.getShortUserInfo(getSecondChatMember(userId, chat)).getData(),
                         chat.getMessages().stream().max(Comparator.comparing(Message::getCreationTime))
-                                .orElse(Message.builder().text("no messages yet").build())))
+                                .orElse(Message.builder().text("no messages yet").build()),
+                        getChatSection(advertisementInfoService.getShortAdvertisementInfo(chat.getAdvertisementId()), userId)))
 
                 .collect(Collectors.toList());
+    }
+
+
+    private String getChatSection(ShortAdvertisementInfoDto shortAdvertisementInfo, long userId){
+        if (shortAdvertisementInfo.getUserId() == userId){
+           return shortAdvertisementInfo.getSection();
+        }
+        return shortAdvertisementInfo.getSection().equals("BUY") ? "SELL" : "BUY";
     }
 
     public long getSecondChatMember(long checkingUserId, Chat chat){
        return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
     }
 
+    public List<ChatResponseForList> getBuyUsersChats(Principal principal) {
+        return getAllUsersChats(principal).stream().filter(chat -> chat.getSection().equals("BUY")).toList();
+    }
+
+    public List<ChatResponseForList> getSellUsersChats(Principal principal) {
+        return getAllUsersChats(principal).stream().filter(chat -> chat.getSection().equals("SELL")).toList();
+    }
 }

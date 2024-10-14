@@ -9,6 +9,6 @@ public class SelfChatCreationException extends RuntimeException implements SubEx
     }
     @Override
     public int getStatusCode() {
-        return HttpStatus.CONFLICT.value();
+        return HttpStatus.BAD_REQUEST.value();
     }
 }

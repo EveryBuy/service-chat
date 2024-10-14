@@ -9,8 +9,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ShortAdvertisementInfoDto implements Serializable {
+public class ShortAdvertisementInfoDto{
     private Long id;
+    private String section;
     private String title;
     private String price;
     private Long userId;

@@ -115,7 +115,11 @@ public class ChatService {
         if (shortAdvertisementInfo.getUserId() == userId){
            return shortAdvertisementInfo.getSection();
         }
-        return shortAdvertisementInfo.getSection().equals("BUY") ? "SELL" : "BUY";
+        String adSection = shortAdvertisementInfo.getSection();
+        if (adSection == null){
+            return "UNKNOWN ALD AD";
+        }
+        return adSection.equals("BUY") ? "SELL" : "BUY";
     }
 
     public long getSecondChatMember(long checkingUserId, Chat chat){

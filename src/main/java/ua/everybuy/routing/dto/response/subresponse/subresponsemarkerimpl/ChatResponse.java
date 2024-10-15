@@ -20,8 +20,8 @@ public class ChatResponse implements SubResponseMarker, Serializable {
     private long advertisementId;
     private String creationDate;
     private String updateAt;
-    private long buyerId;
-    private long sellerId;
+    private long userId;
+    private long adOwnerId;
     private boolean isAnotherUserBlocked;
     private boolean isCurrentlyUserBlocked;
     private List<MessageResponse> chatMessages;

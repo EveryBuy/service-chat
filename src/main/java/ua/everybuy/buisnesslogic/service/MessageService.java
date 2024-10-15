@@ -2,10 +2,12 @@ package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.MessageRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.UserNotInChatException;
 import ua.everybuy.routing.dto.mapper.MessageMapper;
 import ua.everybuy.routing.dto.request.MessageRequest;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
@@ -23,7 +25,9 @@ public class MessageService {
     public MessageResponse createMessage(long chatId, MessageRequest messageRequest, Principal principal){
         validateMessageSendingPermission(chatId, principal);
         Chat chat = chatService.findChatById(chatId);
-        Message message = messageMapper.convertRequestToMessage(messageRequest, Long.parseLong(principal.getName()), chat);
+        long userId = PrincipalConvertor.extractPrincipalId(principal);
+        checkUserMembershipInChat(userId, chat);
+        Message message = messageMapper.convertRequestToMessage(messageRequest, userId, chat);
         chatService.updateChat(chat);
         messageRepository.save(message);
         return messageMapper.convertMessageToResponse(message);
@@ -35,6 +39,12 @@ public class MessageService {
         long buyerId = chat.getBuyerId();
         if (blackListService.checkBlock(sellerId, buyerId)){
             throw new BlockUserException(Long.parseLong(principal.getName()));
+        }
+    }
+
+    private void checkUserMembershipInChat(long userId, Chat chat){
+        if (userId != chat.getSellerId() && userId != chat.getBuyerId()){
+            throw new UserNotInChatException(userId, chat.getId());
         }
     }
 

@@ -38,6 +38,7 @@ public class ValidationFilter extends OncePerRequestFilter {
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/v3/**"),
             new AntPathRequestMatcher("/chat/user/**"),
+            new AntPathRequestMatcher("/chat/cache/**"),
             new AntPathRequestMatcher("/test/**"));
 
     @Override

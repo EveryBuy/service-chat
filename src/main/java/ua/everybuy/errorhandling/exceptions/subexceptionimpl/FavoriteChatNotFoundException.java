@@ -3,7 +3,7 @@ package ua.everybuy.errorhandling.exceptions.subexceptionimpl;
 import org.springframework.http.HttpStatus;
 import ua.everybuy.errorhandling.exceptions.SubException;
 
-public class FavoriteChatNotFoundException extends RuntimeException implements SubException {
+public class FavoriteChatNotFoundException extends IllegalArgumentException implements SubException {
     public FavoriteChatNotFoundException(long chatId, long userId){
         super(String.format("The chat with ID: %d and user id: %d not found in favorites.", chatId, userId));
     }

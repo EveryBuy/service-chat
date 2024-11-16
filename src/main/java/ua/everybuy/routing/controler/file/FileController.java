@@ -1,26 +1,26 @@
-package ua.everybuy.routing.controler.message;
+package ua.everybuy.routing.controler.file;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 import ua.everybuy.errorhandling.ErrorResponse;
-import ua.everybuy.routing.dto.request.MessageRequest;
-import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
+import java.io.IOException;
 import java.security.Principal;
 
-public interface MessageController {
-
-    @Operation(summary = "Send message to chat",
-            description = "Sends a message to a specific chat room via WebSocket. The message is sent to all users subscribed to the '/topic/chat/{chatId}' topic.")
+public interface FileController {
+    @Operation(summary = "Send file to chat",
+            description = "Sends a file to a specific chat room.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Message successfully sent",
+            @ApiResponse(responseCode = "200", description = "File successfully sent",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class))),
+                            schema = @Schema(implementation = FileResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid chatId",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class))),
@@ -34,5 +34,5 @@ public interface MessageController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    MessageResponse sendMessage(long chatId, MessageRequest message, Principal principal);
+    FileResponse sendFile(@PathVariable long chatId, MultipartFile file, Principal principal) throws IOException;
 }

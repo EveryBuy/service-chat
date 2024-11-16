@@ -20,7 +20,7 @@ public class MessageControllerImpl implements MessageController{
     private final MessageService messageService;
     private final AwsS3Service awsS3Service;
 
-    @Override
+
     @CrossOrigin("*")
     @MessageMapping("/chat/{chatId}")
     @SendTo("/topic/chat/{chatId}")
@@ -30,6 +30,7 @@ public class MessageControllerImpl implements MessageController{
         return response;
     }
 
+    @Override
     @PostMapping("/chat/{chatId}/send-message")
     @ResponseBody()
     @ResponseStatus(HttpStatus.CREATED)

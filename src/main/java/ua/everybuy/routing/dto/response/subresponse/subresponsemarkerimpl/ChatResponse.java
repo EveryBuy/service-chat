@@ -16,15 +16,15 @@ import java.util.List;
 
 public class ChatResponse implements SubResponseMarker, Serializable {
     private long id;
+    private boolean isAnotherUserBlocked;
+    private boolean isCurrentlyUserBlocked;
     private String section;
     private long advertisementId;
     private String creationDate;
     private String updateAt;
     private long userId;
     private long adOwnerId;
-    private boolean isAnotherUserBlocked;
-    private boolean isCurrentlyUserBlocked;
-    private List<MessageResponse> chatMessages;
     private ShortUserInfoDto userData;
     private ShortAdvertisementInfoDto shortAdvertisementInfo;
+    private List<ChatContent> chatMessages;
 }

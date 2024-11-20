@@ -31,7 +31,7 @@ public class ChatService {
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
 
-    public StatusResponse createChat(Long advertisementId, Principal principal){
+    public StatusResponse createChat(Long advertisementId, Principal principal) {
         long buyerId = PrincipalConvertor.extractPrincipalId(principal);
         long sellerId = advertisementInfoService.getShortAdvertisementInfo(advertisementId).getUserId();
         if (blackListService.isUserInBlackList(sellerId, buyerId)) {
@@ -48,7 +48,7 @@ public class ChatService {
         return chatRepository.findById(id).orElseThrow(() -> new ChatNotFoundException(id));
     }
 
-    private void checkIfChatPresent(Long advertisementId, Long buyerId, long sellerId){
+    private void checkIfChatPresent(Long advertisementId, Long buyerId, long sellerId) {
         boolean isPresent = chatRepository.existsChatByAdvertisementIdAndBuyerIdAndSellerId(
                 advertisementId,
                 buyerId,
@@ -59,13 +59,13 @@ public class ChatService {
         }
     }
 
-    private void checkIfBuyerIsAdOwner(long userId, long buyerId){
-        if (userId == buyerId){
+    private void checkIfBuyerIsAdOwner(long userId, long buyerId) {
+        if (userId == buyerId) {
             throw new SelfChatCreationException(userId);
         }
     }
 
-    public StatusResponse getChat(Long chatId, Principal principal){
+    public StatusResponse getChat(Long chatId, Principal principal) {
         Chat chat = getChatByIdAndUserId(chatId, principal);
         long advertisementId = chat.getAdvertisementId();
         long checkingUserId = PrincipalConvertor.extractPrincipalId(principal);
@@ -77,60 +77,44 @@ public class ChatService {
         try {
             shortAdvertisementInfo = advertisementInfoService
                     .getShortAdvertisementInfo(advertisementId);
-        }catch (AdvertisementException ex){
+        } catch (AdvertisementException ex) {
             shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
         }
         String section = getChatSection(shortAdvertisementInfo, checkingUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
-                .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat,  userData, shortAdvertisementInfo, section));
+                .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat, userData, shortAdvertisementInfo, section));
     }
 
-    public Chat getChatByIdAndUserId(long chatId, Principal principal){
-        long userId = PrincipalConvertor.extractPrincipalId(principal);
-        return chatRepository.findChatByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ChatNotFoundException(chatId, userId));
+    public List<Chat> getAllUserChatsByDateDesc(long userId) {
+        return chatRepository.findAllByUserIdOrderByUpdateDateDesc(userId);
     }
 
-    public void updateChat(Chat chat){
-        chat.setUpdateDate(LocalDateTime.now());
-        chatRepository.save(chat);
-    }
-
-    public List<ChatResponseForList> getAllUsersChats(Principal principal){
-        long userId = PrincipalConvertor.extractPrincipalId(principal);
-
-        return chatRepository.findAllByUserIdOrderByUpdateDateDesc(userId)
-                .stream()
-                .map(chat -> chatMapper.mapToChatResponseForList(chat,
-                        userInfoService.getShortUserInfo(getSecondChatMember(userId, chat)).getData(),
-                        chat.getMessages().stream().max(Comparator.comparing(Message::getCreationTime))
-                                .orElse(Message.builder().text("no messages yet").build()),
-                        getChatSection(advertisementInfoService.getShortAdvertisementInfo(chat.getAdvertisementId()), userId)))
-
-                .collect(Collectors.toList());
-    }
-
-
-    private String getChatSection(ShortAdvertisementInfoDto shortAdvertisementInfo, long userId){
-        if (shortAdvertisementInfo.getUserId() == userId){
-           return shortAdvertisementInfo.getSection();
+    public String getChatSection(ShortAdvertisementInfoDto shortAdvertisementInfo, long userId) {
+        if (shortAdvertisementInfo.getUserId() == userId) {
+            return shortAdvertisementInfo.getSection();
         }
         String adSection = shortAdvertisementInfo.getSection();
-        if (adSection == null){
+        if (adSection == null) {
             return "UNKNOWN ALD AD";
         }
         return adSection.equals("BUY") ? "SELL" : "BUY";
     }
 
-    public long getSecondChatMember(long checkingUserId, Chat chat){
-       return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
+    public Chat getChatByIdAndUserId(long chatId, Principal principal) {
+        long userId = PrincipalConvertor.extractPrincipalId(principal);
+        return chatRepository.findChatByIdAndUserId(chatId, userId)
+                .orElseThrow(() -> new ChatNotFoundException(chatId, userId));
     }
 
-    public List<ChatResponseForList> getBuyUsersChats(Principal principal) {
-        return getAllUsersChats(principal).stream().filter(chat -> chat.getSection().equals("BUY")).toList();
+    public void updateChat(Chat chat) {
+        chat.setUpdateDate(LocalDateTime.now());
+        chatRepository.save(chat);
     }
 
-    public List<ChatResponseForList> getSellUsersChats(Principal principal) {
-        return getAllUsersChats(principal).stream().filter(chat -> chat.getSection().equals("SELL")).toList();
+
+    public long getSecondChatMember(long checkingUserId, Chat chat) {
+        return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
     }
+
+
 }

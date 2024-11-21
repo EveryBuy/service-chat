@@ -29,5 +29,4 @@ public class FavoriteChat implements Serializable {
         this.chat = chat;
         this.userId = userId;
     }
-
 }

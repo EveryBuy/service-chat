@@ -3,6 +3,7 @@ package ua.everybuy.buisnesslogic.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.FavoriteChat;
 import ua.everybuy.database.repository.FavoriteChatRepository;

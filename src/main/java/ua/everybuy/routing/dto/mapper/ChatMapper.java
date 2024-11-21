@@ -18,11 +18,12 @@ public class ChatMapper {
     private final MessageMapper messageMapper;
     private final FileUrlMapper fileUrlMapper;
 
-    public Chat buildChat(long advertisementId, long buyerId, long sellerId) {
+    public Chat buildChat(long advertisementId, long initiatorId, long adOwnerId, Chat.Section section) {
         return Chat.builder()
                 .advertisementId(advertisementId)
-                .buyerId(buyerId)
-                .sellerId(sellerId)
+                .initiatorId(initiatorId)
+                .adOwnerId(adOwnerId)
+                .section(section)
                 .build();
     }
 
@@ -31,8 +32,8 @@ public class ChatMapper {
                 .id(chat.getId())
                 .advertisementId(chat.getAdvertisementId())
                 .creationDate(chat.getCreationDate())
-                .buyerId(chat.getBuyerId())
-                .sellerId(chat.getSellerId())
+                .buyerId(chat.getInitiatorId())
+                .sellerId(chat.getAdOwnerId())
                 .build();
     }
 
@@ -50,8 +51,8 @@ public class ChatMapper {
                 .advertisementId(chat.getAdvertisementId())
                 .creationDate(chat.getCreationDate().toString())
                 .updateAt(chat.getUpdateDate().toString())
-                .userId(chat.getBuyerId())
-                .adOwnerId(chat.getSellerId())
+                .initiatorId(chat.getInitiatorId())
+                .adOwnerId(chat.getAdOwnerId())
                 .isAnotherUserBlocked(isAnotherUserBlocked)
                 .isCurrentlyUserBlocked(isCurrentlyUserBlocked)
                 .chatMessages(getChatContent(chat))
@@ -90,5 +91,13 @@ public class ChatMapper {
                         fileResponses.stream()
                 ).sorted(Comparator.comparing(ChatContent::getCreationTime))
                 .toList();
+    }
+
+    public ChatResponse mapToShortResp(Chat chat){
+        return ChatResponse.builder()
+                .section(chat.getSection().name())
+                .adOwnerId(chat.getAdOwnerId())
+                .initiatorId(chat.getInitiatorId())
+                .build();
     }
 }

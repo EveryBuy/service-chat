@@ -3,7 +3,7 @@ package ua.everybuy.errorhandling.exceptions.subexceptionimpl;
 import org.springframework.http.HttpStatus;
 import ua.everybuy.errorhandling.exceptions.SubException;
 
-public class SelfChatCreationException extends IllegalArgumentException implements SubException {
+public class SelfChatCreationException extends SubException {
     public SelfChatCreationException(long userId){
         super("User " + userId + " is advertisement owner");
     }

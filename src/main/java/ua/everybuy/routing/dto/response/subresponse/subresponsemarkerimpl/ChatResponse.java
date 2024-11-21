@@ -22,7 +22,7 @@ public class ChatResponse implements SubResponseMarker, Serializable {
     private long advertisementId;
     private String creationDate;
     private String updateAt;
-    private long userId;
+    private long initiatorId;
     private long adOwnerId;
     private ShortUserInfoDto userData;
     private ShortAdvertisementInfoDto shortAdvertisementInfo;

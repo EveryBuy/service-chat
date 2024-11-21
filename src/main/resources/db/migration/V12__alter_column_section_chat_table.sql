@@ -1,0 +1,2 @@
+ALTER TABLE chat
+    ALTER COLUMN section SET NOT NULL;

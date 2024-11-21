@@ -77,10 +77,9 @@ public class ChatService {
             return chat.getSection().name();
         }
         Chat.Section adSection = chat.getSection();
-        if (adSection == null) {
-            return "UNKNOWN ALD AD";
-        }
-        return adSection.equals("BUY") ? "SELL" : "BUY";
+        return adSection.equals(Chat.Section.BUY)
+                ? Chat.Section.SELL.name()
+                : Chat.Section.BUY.name();
     }
 
     public Chat getChatByIdAndUserId(long chatId, Principal principal) {
@@ -96,23 +95,6 @@ public class ChatService {
 
     public long getSecondChatMember(long checkingUserId, Chat chat) {
         return checkingUserId == chat.getAdOwnerId() ? chat.getInitiatorId() : chat.getAdOwnerId();
-    }
-
-
-    public List<Chat> getAllChats(){
-        return chatRepository.findAll();
-    }
-
-    public List<ChatResponse> updateAllChats(){
-        getAllChats().stream().filter(chat -> chat.getSection() == null)
-                .forEach(chat -> {
-                    chat.setSection(Chat.Section.valueOf(advertisementInfoService.getShortAdvertisementInfo(chat.getAdvertisementId()).getSection()));
-                    chatRepository.save(chat);
-                });
-
-        return getAllChats().stream()
-                .map(chatMapper::mapToShortResp)
-                .toList();
     }
 
 }

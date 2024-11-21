@@ -31,13 +31,6 @@ public class AdvertisementInfoService {
         }
     }
 
-    private void throwExceptionIfAdvertisementNotAvailable(HttpStatusCode statusCode, long advertisementId){
-        if (statusCode.equals(HttpStatus.FORBIDDEN)){
-            throw new AdvertisementException(statusCode.value(),
-                    "Advertisement with id " + advertisementId + " not available.");
-        }
-    }
-
     private ShortAdvertisementInfoDto extractAdvertisementInfo(long advertisementId){
         String fullUrl = advertisementInfoUrl + "/" +  advertisementId + ADVERTISEMENT_INFO_ENDPOINT;
         ShortAdvertisementInfoDto shortAdvertisementInfoDto;
@@ -46,7 +39,6 @@ public class AdvertisementInfoService {
         } catch (HttpStatusCodeException e) {
             HttpStatusCode statusCode = e.getStatusCode();
             throwExceptionIfAdvertisementNotFound(statusCode, advertisementId);
-            throwExceptionIfAdvertisementNotAvailable(statusCode, advertisementId);
             throw e;
         }
         return shortAdvertisementInfoDto;

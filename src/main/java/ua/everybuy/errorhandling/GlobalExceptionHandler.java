@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(SubException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(SubException ex){
         return ResponseEntity
                 .status(ex.getStatusCode())
@@ -65,6 +65,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ex.getStatusCode())
                 .body(new ErrorResponse(ex.getStatusCode().value(), ex.getMessage()));
+
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(IllegalArgumentException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
 
     }
 

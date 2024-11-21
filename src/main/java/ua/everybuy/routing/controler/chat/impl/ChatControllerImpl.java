@@ -3,10 +3,11 @@ package ua.everybuy.routing.controler.chat.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ua.everybuy.buisnesslogic.service.ChatListingService;
-import ua.everybuy.buisnesslogic.service.ChatService;
+import ua.everybuy.buisnesslogic.service.chat.ChatListingService;
+import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.routing.controler.chat.ChatController;
 import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
@@ -48,5 +49,12 @@ public class ChatControllerImpl implements ChatController {
     @ResponseStatus(HttpStatus.OK)
     public List<ChatResponseForList> getSellUsersChats(Principal principal){
         return chatListingService.getUsersChatsBySection(principal, "SELL");
+    }
+
+    @GetMapping("/update-all-chats")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatResponse> updateAllChats(){
+        return chatService.updateAllChats();
     }
 }

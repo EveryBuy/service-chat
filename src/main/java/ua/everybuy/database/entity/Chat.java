@@ -27,14 +27,18 @@ public class Chat implements Serializable {
     @Column(name = "created_at")
     private LocalDateTime creationDate;
 
-    @Column(name = "buyer_id")
-    private long buyerId;
+    @Column(name = "initiator_id")
+    private long initiatorId;
 
-    @Column(name = "seller_id")
-    private long sellerId;
+    @Column(name = "ad_owner_id")
+    private long adOwnerId;
 
     @Column(name = "updated_at")
     private LocalDateTime updateDate;
+
+    @Column(name = "section")
+    @Enumerated(EnumType.STRING)
+    private Section section;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<Message> messages;
@@ -55,6 +59,10 @@ public class Chat implements Serializable {
 
     public void setUpdateDate(LocalDateTime updateDate){
         this.updateDate = DateService.getDate(updateDate);
+    }
+
+    public enum Section {
+        BUY, SELL
     }
 }
 

@@ -1,26 +1,24 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.BlackListService;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.ChatRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.*;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
 import ua.everybuy.routing.dto.response.StatusResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponse;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,39 +28,24 @@ public class ChatService {
     private final BlackListService blackListService;
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
+    private final ChatValidateService chatValidateService;
 
     public StatusResponse createChat(Long advertisementId, Principal principal) {
-        long buyerId = PrincipalConvertor.extractPrincipalId(principal);
-        long sellerId = advertisementInfoService.getShortAdvertisementInfo(advertisementId).getUserId();
-        if (blackListService.isUserInBlackList(sellerId, buyerId)) {
-            throw new BlockUserException(buyerId);
-        }
-        checkIfChatPresent(advertisementId, buyerId, sellerId);
-        checkIfBuyerIsAdOwner(buyerId, sellerId);
-        userInfoService.ensureUserExists(sellerId);//if user not present UserNotFoundException will be thrown
-        Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, buyerId, sellerId));
+        ShortAdvertisementInfoDto advertisementInfo =
+                advertisementInfoService.getShortAdvertisementInfo(advertisementId);
+        long initiatorId = PrincipalConvertor.extractPrincipalId(principal);
+        long adOwnerId = advertisementInfo.getUserId();
+        Chat.Section section = Chat.Section.valueOf(advertisementInfo.getSection());
+
+        chatValidateService.validateChatCreation(advertisementId, initiatorId, adOwnerId);
+        userInfoService.ensureUserExists(adOwnerId);//if user not present UserNotFoundException will be thrown
+
+        Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, initiatorId, adOwnerId, section));
         return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
     }
 
     public Chat findChatById(Long id) {
         return chatRepository.findById(id).orElseThrow(() -> new ChatNotFoundException(id));
-    }
-
-    private void checkIfChatPresent(Long advertisementId, Long buyerId, long sellerId) {
-        boolean isPresent = chatRepository.existsChatByAdvertisementIdAndBuyerIdAndSellerId(
-                advertisementId,
-                buyerId,
-                sellerId);
-
-        if (isPresent) {
-            throw new ChatAlreadyExistsException();
-        }
-    }
-
-    private void checkIfBuyerIsAdOwner(long userId, long buyerId) {
-        if (userId == buyerId) {
-            throw new SelfChatCreationException(userId);
-        }
     }
 
     public StatusResponse getChat(Long chatId, Principal principal) {
@@ -80,7 +63,7 @@ public class ChatService {
         } catch (AdvertisementException ex) {
             shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
         }
-        String section = getChatSection(shortAdvertisementInfo, checkingUserId);
+        String section = getChatSection(chat, checkingUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
                 .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat, userData, shortAdvertisementInfo, section));
     }
@@ -89,11 +72,11 @@ public class ChatService {
         return chatRepository.findAllByUserIdOrderByUpdateDateDesc(userId);
     }
 
-    public String getChatSection(ShortAdvertisementInfoDto shortAdvertisementInfo, long userId) {
-        if (shortAdvertisementInfo.getUserId() == userId) {
-            return shortAdvertisementInfo.getSection();
+    public String getChatSection(Chat chat, long userId) {
+        if (chat.getAdOwnerId() == userId) {
+            return chat.getSection().name();
         }
-        String adSection = shortAdvertisementInfo.getSection();
+        Chat.Section adSection = chat.getSection();
         if (adSection == null) {
             return "UNKNOWN ALD AD";
         }
@@ -111,10 +94,25 @@ public class ChatService {
         chatRepository.save(chat);
     }
 
-
     public long getSecondChatMember(long checkingUserId, Chat chat) {
-        return checkingUserId == chat.getSellerId() ? chat.getBuyerId() : chat.getSellerId();
+        return checkingUserId == chat.getAdOwnerId() ? chat.getInitiatorId() : chat.getAdOwnerId();
     }
 
+
+    public List<Chat> getAllChats(){
+        return chatRepository.findAll();
+    }
+
+    public List<ChatResponse> updateAllChats(){
+        getAllChats().stream().filter(chat -> chat.getSection() == null)
+                .forEach(chat -> {
+                    chat.setSection(Chat.Section.valueOf(advertisementInfoService.getShortAdvertisementInfo(chat.getAdvertisementId()).getSection()));
+                    chatRepository.save(chat);
+                });
+
+        return getAllChats().stream()
+                .map(chatMapper::mapToShortResp)
+                .toList();
+    }
 
 }

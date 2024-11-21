@@ -2,6 +2,7 @@ package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
@@ -35,15 +36,15 @@ public class MessageService {
 
     private void validateMessageSendingPermission(long chatId, Principal principal){
         Chat chat = chatService.findChatById(chatId);
-        long sellerId = chat.getSellerId();
-        long buyerId = chat.getBuyerId();
+        long sellerId = chat.getAdOwnerId();
+        long buyerId = chat.getInitiatorId();
         if (blackListService.checkBlock(sellerId, buyerId)){
             throw new BlockUserException(Long.parseLong(principal.getName()));
         }
     }
 
     private void checkUserMembershipInChat(long userId, Chat chat){
-        if (userId != chat.getSellerId() && userId != chat.getBuyerId()){
+        if (userId != chat.getAdOwnerId() && userId != chat.getInitiatorId()){
             throw new UserNotInChatException(userId, chat.getId());
         }
     }

@@ -1,4 +1,4 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class ChatListingService {
                 .getShortUserInfo(chatService.getSecondChatMember(userId, chat)).getData();
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
                 .getShortAdvertisementInfo(chat.getAdvertisementId());
-        String section = chatService.getChatSection(adInfo, userId);
+        String section = chatService.getChatSection(chat, userId);
         Message latestMessage = chat.getMessages()
                 .stream().max(Comparator.comparing(Message::getCreationTime))
                 .orElse(Message.builder().text("no messages yet").build());

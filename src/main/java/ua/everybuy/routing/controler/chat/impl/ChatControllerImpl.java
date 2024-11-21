@@ -50,11 +50,4 @@ public class ChatControllerImpl implements ChatController {
     public List<ChatResponseForList> getSellUsersChats(Principal principal){
         return chatListingService.getUsersChatsBySection(principal, "SELL");
     }
-
-    @GetMapping("/update-all-chats")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<ChatResponse> updateAllChats(){
-        return chatService.updateAllChats();
-    }
 }

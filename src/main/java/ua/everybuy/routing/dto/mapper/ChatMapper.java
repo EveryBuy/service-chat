@@ -6,17 +6,17 @@ import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.CreateChatResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
 public class ChatMapper {
     private final MessageMapper messageMapper;
+    private final FileUrlMapper fileUrlMapper;
 
     public Chat buildChat(long advertisementId, long buyerId, long sellerId) {
         return Chat.builder()
@@ -44,9 +44,6 @@ public class ChatMapper {
             ShortAdvertisementInfoDto shortAdvertisementInfo,
                                               String section) {
         System.out.println("Cache doesn't work mapChatToChatResponse, method executed");
-        List<MessageResponse> messageResponses = chat.getMessages().stream()
-                .map(messageMapper::convertMessageToResponse)
-                .toList();
 
         return ChatResponse.builder()
                 .id(chat.getId())
@@ -57,7 +54,7 @@ public class ChatMapper {
                 .adOwnerId(chat.getSellerId())
                 .isAnotherUserBlocked(isAnotherUserBlocked)
                 .isCurrentlyUserBlocked(isCurrentlyUserBlocked)
-                .chatMessages(messageResponses)
+                .chatMessages(getChatContent(chat))
                 .userData(shortUserInfoDto)
                 .shortAdvertisementInfo(shortAdvertisementInfo)
                 .section(section)
@@ -67,13 +64,31 @@ public class ChatMapper {
     public ChatResponseForList mapToChatResponseForList(Chat chat,
                                                         ShortUserInfoDto userData,
                                                         Message message,
-                                                        String section) {
+                                                        String section,
+                                                        boolean isEnabled) {
         return ChatResponseForList.builder()
                 .chatId(chat.getId())
                 .userData(userData)
                 .lastMessage(message.getText())
                 .lastMessageDate(chat.getUpdateDate())
                 .section(section)
+                .isAdvertisementActive(isEnabled)
                 .build();
+    }
+
+    private List<ChatContent> getChatContent(Chat chat){
+        List<MessageResponse> messageResponses = chat.getMessages().stream()
+                .map(messageMapper::convertMessageToResponse)
+                .toList();
+
+        List<FileResponse> fileResponses = chat.getFileUrls().stream()
+                .map(fileUrlMapper::convertToFileResponse)
+                .toList();
+
+       return Stream.concat(
+                        messageResponses.stream(),
+                        fileResponses.stream()
+                ).sorted(Comparator.comparing(ChatContent::getCreationTime))
+                .toList();
     }
 }

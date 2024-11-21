@@ -49,15 +49,4 @@ public interface ChatController {
     })
     StatusResponse getChat(@PathVariable long id, Principal principal);
 
-    @Operation(summary = "Get all users chats")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Get all users chats",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StatusResponse.class)) }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class))),
-
-    })
-    List<ChatResponseForList> getAllUsersChats(Principal principal);
 }

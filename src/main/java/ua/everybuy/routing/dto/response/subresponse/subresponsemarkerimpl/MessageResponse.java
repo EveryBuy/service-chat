@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class MessageResponse implements SubResponseMarker, Serializable {
+public class MessageResponse implements SubResponseMarker, ChatContent {
     private Long id;
     private String text;
     private LocalDateTime creationTime;

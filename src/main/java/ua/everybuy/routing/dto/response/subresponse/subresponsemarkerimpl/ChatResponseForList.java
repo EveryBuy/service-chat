@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ChatResponseForList {
     private long chatId;
+    boolean isAdvertisementActive;
     private ShortUserInfoDto userData;
     private String lastMessage;
     private LocalDateTime lastMessageDate;

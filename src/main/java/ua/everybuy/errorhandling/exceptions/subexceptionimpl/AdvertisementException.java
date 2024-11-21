@@ -2,7 +2,7 @@ package ua.everybuy.errorhandling.exceptions.subexceptionimpl;
 
 import ua.everybuy.errorhandling.exceptions.SubException;
 
-public class AdvertisementException extends RuntimeException implements SubException {
+public class AdvertisementException extends IllegalArgumentException implements SubException {
     private final int statusCode;
     public AdvertisementException(int statusCode, String message) {
         super(message);

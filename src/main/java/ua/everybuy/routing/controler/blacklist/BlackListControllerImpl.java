@@ -3,7 +3,7 @@ package ua.everybuy.routing.controler.blacklist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ua.everybuy.buisnesslogic.service.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
 import ua.everybuy.routing.dto.response.StatusResponse;
 
 import java.security.Principal;

@@ -21,7 +21,7 @@ public class FileControllerImpl implements FileController{
     @PostMapping("/{chatId}/file-upload")
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    public FileResponse sendFile(@PathVariable long chatId, MultipartFile file, Principal principal) throws IOException {
+    public FileResponse sendFile(@PathVariable long chatId, @RequestParam MultipartFile file, Principal principal) throws IOException {
         return fileUrlService.saveFile(chatId, file, principal);
     }
 

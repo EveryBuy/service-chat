@@ -10,8 +10,6 @@ public class CacheService {
     private final RedisCacheManager redisCacheManager;
 
     public void clearAllCaches() {
-        redisCacheManager.getCacheNames().forEach(cacheName -> {
-            redisCacheManager.getCache(cacheName).clear();
-        });
+        redisCacheManager.getCacheNames().forEach(cacheName -> redisCacheManager.getCache(cacheName).clear());
     }
 }

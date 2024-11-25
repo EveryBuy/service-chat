@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.FileNotPresentException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -23,7 +24,8 @@ public class AwsS3Service {
     @Value("${aws.bucket.prefix}")
     private String urlFilePrefix;
 
-    public String uploadFile(MultipartFile file) throws IOException{
+    public String uploadFile(MultipartFile file) throws IOException {
+        checkIfFileEmpty(file);
 
         if (!s3Client.doesBucketExistV2(bucketName)) {
             throw new IOException("Bucket '" + bucketName + "' does not exist.");
@@ -47,5 +49,11 @@ public class AwsS3Service {
         }
 
         return fileUrl;
+    }
+
+    private void checkIfFileEmpty(MultipartFile file){
+        if (file.isEmpty()){
+            throw new FileNotPresentException();
+        }
     }
 }

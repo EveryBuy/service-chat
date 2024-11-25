@@ -3,7 +3,8 @@ package ua.everybuy.buisnesslogic.service.chat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ua.everybuy.buisnesslogic.service.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
@@ -14,7 +15,6 @@ import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
 import ua.everybuy.routing.dto.response.StatusResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponse;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import java.util.List;
 public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
-    private final BlackListService blackListService;
+    private final BlackListValidateService blackListValidateService;
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
     private final ChatValidateService chatValidateService;
@@ -38,7 +38,7 @@ public class ChatService {
         Chat.Section section = Chat.Section.valueOf(advertisementInfo.getSection());
 
         chatValidateService.validateChatCreation(advertisementId, initiatorId, adOwnerId);
-        userInfoService.ensureUserExists(adOwnerId);//if user not present UserNotFoundException will be thrown
+        blackListValidateService.ensureUserExist(adOwnerId);//if user not present UserNotFoundException will be thrown
 
         Chat savedChat = chatRepository.save(chatMapper.buildChat(advertisementId, initiatorId, adOwnerId, section));
         return new StatusResponse(HttpStatus.CREATED.value(), chatMapper.mapChatToCreateChatResponse(savedChat));
@@ -53,8 +53,8 @@ public class ChatService {
         long advertisementId = chat.getAdvertisementId();
         long checkingUserId = PrincipalConvertor.extractPrincipalId(principal);
         long checkedUserId = getSecondChatMember(checkingUserId, chat);
-        boolean isAnotherUserBlocked = blackListService.isUserInBlackList(checkingUserId, checkedUserId);
-        boolean isCurrentlyUserBlocked = blackListService.isUserInBlackList(checkedUserId, checkingUserId);
+        boolean isAnotherUserBlocked = blackListValidateService.isUserInBlackList(checkingUserId, checkedUserId);
+        boolean isCurrentlyUserBlocked = blackListValidateService.isUserInBlackList(checkedUserId, checkingUserId);
         ShortUserInfoDto userData = userInfoService.getShortUserInfo(checkedUserId).getData();
         ShortAdvertisementInfoDto shortAdvertisementInfo;
         try {

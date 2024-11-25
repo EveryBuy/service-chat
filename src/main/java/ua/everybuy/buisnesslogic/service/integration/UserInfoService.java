@@ -20,15 +20,10 @@ public class UserInfoService {
 
     @Cacheable(key = "#userId", value = "userInfo")
     public UserStatusResponse getShortUserInfo(long userId) {
-
-        System.out.println("inside getShortUserInfo method cache doesn't work");
-
+//        System.out.println("inside getShortUserInfo method cache doesn't work");
         return extractUserInfo(userId);
     }
 
-    public void ensureUserExists(long userId){
-        getShortUserInfo(userId);
-    }
 
     private void throwExceptionIfUserNotFound(HttpStatusCode statusCode, long userId){
         if (statusCode.equals(HttpStatus.NOT_FOUND)) {
@@ -36,13 +31,12 @@ public class UserInfoService {
         }
     }
 
-    public UserStatusResponse extractUserInfo(long userId){
+    private UserStatusResponse extractUserInfo(long userId){
         String fullUrl = userInfoUrl + USER_INFO_ENDPOINT + userId;
         UserStatusResponse statusResponse;
         System.out.println("inside getShortUserInfo method cache doesn't work");
         try {
             statusResponse = requestSenderService.doRequest(fullUrl, UserStatusResponse.class).getBody();
-            System.out.println(statusResponse);
         } catch (HttpStatusCodeException e) {
             throwExceptionIfUserNotFound(e.getStatusCode(), userId);
             throw e;

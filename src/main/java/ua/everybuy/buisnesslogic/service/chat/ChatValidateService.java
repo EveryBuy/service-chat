@@ -3,7 +3,8 @@ package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.everybuy.buisnesslogic.service.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.database.repository.ChatRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ChatAlreadyExistsException;
@@ -12,7 +13,8 @@ import ua.everybuy.errorhandling.exceptions.subexceptionimpl.SelfChatCreationExc
 @Service
 @RequiredArgsConstructor
 public class ChatValidateService {
-    private final BlackListService blackListService;
+
+    private final BlackListValidateService blackListValidateService;
     private final ChatRepository chatRepository;
 
     public void validateChatCreation(long advertisementId, long initiatorId, long adOwnerId){
@@ -22,7 +24,7 @@ public class ChatValidateService {
     }
 
     private void checkIfUserBlocked(long adOwnerId, long initiatorId){
-        if (blackListService.isUserInBlackList(adOwnerId, initiatorId)) {
+        if (blackListValidateService.isUserInBlackList(adOwnerId, initiatorId)) {
             throw new BlockUserException(initiatorId);
         }
     }

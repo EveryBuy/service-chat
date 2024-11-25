@@ -8,7 +8,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ua.everybuy.buisnesslogic.service.AwsS3Service;
 import ua.everybuy.buisnesslogic.service.MessageService;
 import ua.everybuy.routing.dto.request.MessageRequest;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
@@ -18,7 +17,6 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class MessageControllerImpl implements MessageController{
     private final MessageService messageService;
-    private final AwsS3Service awsS3Service;
 
 
     @CrossOrigin("*")

@@ -2,6 +2,8 @@ package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
@@ -20,7 +22,7 @@ import java.security.Principal;
 public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatService chatService;
-    private final BlackListService blackListService;
+    private final BlackListValidateService blackListValidateService;
     private final MessageMapper messageMapper;
 
     public MessageResponse createMessage(long chatId, MessageRequest messageRequest, Principal principal){
@@ -38,9 +40,7 @@ public class MessageService {
         Chat chat = chatService.findChatById(chatId);
         long sellerId = chat.getAdOwnerId();
         long buyerId = chat.getInitiatorId();
-        if (blackListService.checkBlock(sellerId, buyerId)){
-            throw new BlockUserException(Long.parseLong(principal.getName()));
-        }
+        blackListValidateService.checkBlock(sellerId, buyerId);
     }
 
     private void checkUserMembershipInChat(long userId, Chat chat){

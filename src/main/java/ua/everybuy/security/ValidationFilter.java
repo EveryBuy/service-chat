@@ -40,8 +40,7 @@ public class ValidationFilter extends OncePerRequestFilter {
             new AntPathRequestMatcher("/chat/user/**"),
             new AntPathRequestMatcher("/chat/advertisement/**"),
             new AntPathRequestMatcher("/chat/cache/**"),
-            new AntPathRequestMatcher("/chat/update-all-chats"),
-            new AntPathRequestMatcher("/test/**"));
+            new AntPathRequestMatcher("/chat/keep-alive"));
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,

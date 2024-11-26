@@ -3,13 +3,13 @@ package ua.everybuy.errorhandling.exceptions.subexceptionimpl;
 import org.springframework.http.HttpStatus;
 import ua.everybuy.errorhandling.exceptions.SubException;
 
-public class SelfBlockException extends SubException {
-    public SelfBlockException(long userId){
-        super("The user: " + userId + " is trying to block themselves.");
+public class FileFormatException extends SubException {
+    public FileFormatException() {
+        super("File should be image or pdf only");
     }
 
     @Override
     public int getStatusCode() {
-        return HttpStatus.BAD_REQUEST.value();
+        return HttpStatus.UNSUPPORTED_MEDIA_TYPE.value();
     }
 }

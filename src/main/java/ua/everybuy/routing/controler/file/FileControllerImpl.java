@@ -1,6 +1,5 @@
 package ua.everybuy.routing.controler.file;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ua.everybuy.buisnesslogic.service.FileUrlService;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
 
-import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +20,8 @@ public class FileControllerImpl implements FileController{
     @PostMapping("/{chatId}/file-upload")
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    public FileResponse sendFile(@PathVariable long chatId, @RequestParam MultipartFile file, Principal principal) throws IOException {
-        return fileUrlService.saveFile(chatId, file, principal);
+    public List<FileResponse> sendFile(@PathVariable long chatId, @RequestParam List<MultipartFile> files, Principal principal) {
+        return fileUrlService.saveFiles(chatId, files, principal);
     }
 
 

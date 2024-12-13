@@ -29,6 +29,7 @@ public class AwsS3Service {
     private String urlFilePrefix;
 
     public String uploadFile(MultipartFile file) throws IOException {
+        System.out.println("Contnt type =  " + file.getContentType() +" ," + "name = " + file.getOriginalFilename());
         checkIfFileEmpty(file);
         isImageOrPdf(file);
 

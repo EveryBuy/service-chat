@@ -2,8 +2,8 @@ package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
 import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
@@ -15,6 +15,7 @@ import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileRe
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,19 @@ public class FileUrlService {
         FileUrl newFileUrl = fileUrlRepository.save(fileUrlEntity);
         return fileUrlMapper.convertToFileResponse(newFileUrl);
 
+    }
+
+    @Transactional
+    public List<FileResponse> saveFiles (long chatId, List<MultipartFile> files, Principal principal){
+        return files.stream()
+                .map(file -> {
+                    try {
+                        return saveFile(chatId, file, principal);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
     }
 
 //    private void createFileUrlMessage(long chatId, )

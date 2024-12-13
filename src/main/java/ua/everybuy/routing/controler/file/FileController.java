@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 public interface FileController {
     @Operation(summary = "Send file to chat",
@@ -34,5 +34,5 @@ public interface FileController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    FileResponse sendFile(@PathVariable long chatId, MultipartFile file, Principal principal) throws IOException;
+    List<FileResponse> sendFile(@PathVariable long chatId, List<MultipartFile> files, Principal principal) throws IOException;
 }

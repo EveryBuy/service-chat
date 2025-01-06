@@ -32,18 +32,21 @@ public class ChatListingService {
                 .collect(Collectors.toList());
     }
 
-    private ChatResponseForList mapChatForList(Chat chat, long userId) {
+    public ChatResponseForList mapChatForList(Chat chat, long userId) {
         ShortUserInfoDto userInfo = userInfoService
                 .getShortUserInfo(chatService.getSecondChatMember(userId, chat)).getData();
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
                 .getShortAdvertisementInfo(chat.getAdvertisementId());
         String section = chatService.getChatSection(chat, userId);
-        Message latestMessage = chat.getMessages()
-                .stream().max(Comparator.comparing(Message::getCreationTime))
-                .orElse(Message.builder().text("no messages yet").build());
+        Message latestMessage = getLastChatMessage(chat);
         return chatMapper.mapToChatResponseForList(chat, userInfo, latestMessage, section, adInfo.getIsEnabled());
     }
 
+    private Message getLastChatMessage(Chat chat){
+        return chat.getMessages()
+                .stream().max(Comparator.comparing(Message::getCreationTime))
+                .orElse(Message.builder().text(null).build());
+    }
 
     public List<ChatResponseForList> getUsersChatsBySection(Principal principal, String section) {
         return getAllUsersChats(principal).stream()

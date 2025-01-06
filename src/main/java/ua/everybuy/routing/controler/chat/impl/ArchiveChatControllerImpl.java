@@ -3,11 +3,13 @@ package ua.everybuy.routing.controler.chat.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ua.everybuy.buisnesslogic.service.ArchiveChatService;
+import ua.everybuy.buisnesslogic.service.chat.ArchiveChatService;
 import ua.everybuy.routing.controler.chat.ArchiveChatController;
 import ua.everybuy.routing.dto.response.StatusResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/chat")
@@ -29,5 +31,12 @@ public class ArchiveChatControllerImpl implements ArchiveChatController {
     public void removeChatFromArchive(@RequestParam(name = "chatId") Long chatId, Principal principal){
         archiveChatService.deleteChatFromArchive(chatId, principal);
 
+    }
+
+    @GetMapping("/get-all-archive-chats")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatResponseForList> getAllUsersArchiveChats(Principal principal){
+        return archiveChatService.getAllUsersArchiveChats(principal);
     }
 }

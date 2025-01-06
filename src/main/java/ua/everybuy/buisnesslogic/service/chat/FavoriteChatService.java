@@ -1,9 +1,9 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ua.everybuy.buisnesslogic.service.chat.ChatService;
+import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.FavoriteChat;
 import ua.everybuy.database.repository.FavoriteChatRepository;
@@ -11,14 +11,17 @@ import ua.everybuy.errorhandling.exceptions.subexceptionimpl.FavoriteChatAlready
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.FavoriteChatNotFoundException;
 import ua.everybuy.routing.dto.response.StatusResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.AddToFavoriteResponse;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FavoriteChatService {
     private final FavoriteChatRepository favoriteChatRepository;
     private final ChatService chatService;
+    private final ChatListingService chatListingService;
 
     public StatusResponse addChatToFavorite(long chatId, Principal principal){
         Chat chat = chatService.getChatByIdAndUserId(chatId, principal);
@@ -32,7 +35,7 @@ public class FavoriteChatService {
     }
 
     private long extractUserId(Principal principal){
-        return Long.parseLong(principal.getName());
+        return PrincipalConvertor.extractPrincipalId(principal);
     }
 
     public void deleteChatFromFavorite (long chatId, Principal principal){
@@ -43,5 +46,17 @@ public class FavoriteChatService {
             throw new FavoriteChatNotFoundException(chatId, userId);
         }
         favoriteChatRepository.delete(favoriteChatByUserIdAndChatId);
+    }
+
+    private List<FavoriteChat> findAllByUserId(Principal principal){
+        long userId = extractUserId(principal);
+        return favoriteChatRepository.findFavoriteChatsByUserId(userId);
+    }
+
+    public List<ChatResponseForList> getAllUsersFavoriteChats(Principal principal){
+        long userId = extractUserId(principal);
+        return findAllByUserId(principal).stream()
+                .map(chat -> chatListingService.mapChatForList(chat.getChat(), userId))
+                .toList();
     }
 }

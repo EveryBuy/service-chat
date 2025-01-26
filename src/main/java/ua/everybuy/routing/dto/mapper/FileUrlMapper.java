@@ -2,16 +2,16 @@ package ua.everybuy.routing.dto.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
+import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.FileUrl;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
 
-import java.security.Principal;
-
 @Component
 @RequiredArgsConstructor
 public class FileUrlMapper {
+    private final UserInfoService userInfoService;
+
     public FileUrl convertToFileUrl(Chat chat, String fileUrl, long userId){
         return FileUrl.builder()
                 .chat(chat)
@@ -28,6 +28,7 @@ public class FileUrlMapper {
                 .chatId(fileUrl.getChat().getId())
                 .userId(fileUrl.getUserId())
                 .creationTime(fileUrl.getCreationTime())
+                .userPhotoUrl(userInfoService.getShortUserInfo(fileUrl.getUserId()).getData().photoUrl())
                 .build();
     }
 }

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter

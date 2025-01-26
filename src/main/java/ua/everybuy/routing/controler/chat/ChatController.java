@@ -8,10 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.response.StatusResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;
-import java.util.List;
 
 public interface ChatController {
     @Operation(summary = "Create chat")

@@ -7,7 +7,6 @@ import ua.everybuy.buisnesslogic.service.chat.ChatListingService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.routing.controler.chat.ChatController;
 import ua.everybuy.routing.dto.response.StatusResponse;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 
 import java.security.Principal;

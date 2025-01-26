@@ -2,8 +2,6 @@ package ua.everybuy.routing.dto.external.model;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @AllArgsConstructor

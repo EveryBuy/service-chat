@@ -12,7 +12,12 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     boolean existsChatByAdvertisementIdAndInitiatorIdAndAdOwnerId(long advertisementId, long initiatorId, long adOwnerId);
-    @Query("SELECT c FROM Chat c WHERE c.initiatorId = :userId OR c.adOwnerId = :userId ORDER BY c.updateDate DESC")
+    @Query("""
+    SELECT c FROM Chat c
+    LEFT JOIN FETCH c.messages
+    WHERE c.initiatorId = :userId OR c.adOwnerId = :userId
+    ORDER BY c.updateDate DESC
+""")
     List<Chat> findAllByUserIdOrderByUpdateDateDesc(@Param("userId") long userId);
 
     @Query("SELECT c FROM Chat c WHERE c.id = :id AND (c.initiatorId = :userId OR c.adOwnerId = :userId)")

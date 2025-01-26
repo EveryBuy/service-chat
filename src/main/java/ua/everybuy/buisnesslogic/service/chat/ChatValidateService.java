@@ -3,7 +3,6 @@ package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.everybuy.buisnesslogic.service.blacklist.BlackListService;
 import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.database.repository.ChatRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.BlockUserException;

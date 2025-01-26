@@ -5,10 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import ua.everybuy.errorhandling.ErrorResponse;
 import ua.everybuy.routing.dto.request.MessageRequest;
-import ua.everybuy.routing.dto.response.StatusResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
 import java.security.Principal;

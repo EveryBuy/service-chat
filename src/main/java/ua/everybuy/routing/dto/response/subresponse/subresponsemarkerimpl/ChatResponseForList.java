@@ -15,6 +15,7 @@ public class ChatResponseForList {
     boolean isAdvertisementActive;
     private ShortUserInfoDto userData;
     private String lastMessage;
+    private boolean isText;
     private LocalDateTime lastMessageDate;
     private String section;
 }

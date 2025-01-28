@@ -10,7 +10,10 @@ import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatContent;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
+
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
@@ -38,14 +41,16 @@ public class ChatListingService {
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
                 .getShortAdvertisementInfo(chat.getAdvertisementId());
         String section = chatService.getChatSection(chat, userId);
-        Message latestMessage = getLastChatMessage(chat);
-        return chatMapper.mapToChatResponseForList(chat, userInfo, latestMessage, section, adInfo.getIsEnabled());
+        ChatContent latestContent = getLastChatMessage(chat);
+        return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent, section, adInfo.getIsEnabled());
     }
 
-    private Message getLastChatMessage(Chat chat){
-        return chat.getMessages()
-                .stream().max(Comparator.comparing(Message::getCreationTime))
-                .orElse(Message.builder().text(null).build());
+    private ChatContent getLastChatMessage(Chat chat){
+        return chatMapper.getChatContent(chat)
+                .stream()
+                .max(Comparator.comparing(ChatContent::getCreationTime))
+                .orElse(new MessageResponse());
+
     }
 
     public List<ChatResponseForList> getUsersChatsBySection(Principal principal, String section) {

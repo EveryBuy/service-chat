@@ -6,4 +6,5 @@ import java.time.LocalDateTime;
 
 public interface ChatContent extends SubResponseMarker {
     LocalDateTime getCreationTime();
+    String getContent();
 }

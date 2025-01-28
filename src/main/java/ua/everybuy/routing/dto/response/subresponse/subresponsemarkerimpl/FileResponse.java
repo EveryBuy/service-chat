@@ -1,5 +1,6 @@
 package ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,10 @@ public class FileResponse implements SubResponseMarker, ChatContent {
     private Long userId;
     private Long chatId;
     private String userPhotoUrl;
+
+    @Override
+    @JsonIgnore
+    public String getContent(){
+        return fileUrl;
+    }
 }

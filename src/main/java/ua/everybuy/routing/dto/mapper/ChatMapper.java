@@ -64,20 +64,25 @@ public class ChatMapper {
 
     public ChatResponseForList mapToChatResponseForList(Chat chat,
                                                         ShortUserInfoDto userData,
-                                                        Message message,
+                                                        ChatContent chatContent,
                                                         String section,
                                                         boolean isEnabled) {
-        return ChatResponseForList.builder()
+
+        ChatResponseForList response = ChatResponseForList.builder()
                 .chatId(chat.getId())
                 .userData(userData)
-                .lastMessage(message.getText())
+                .lastMessage(chatContent.getContent())
                 .lastMessageDate(chat.getUpdateDate())
                 .section(section)
                 .isAdvertisementActive(isEnabled)
                 .build();
+        if (chatContent.getClass().equals(MessageResponse.class)){
+            response.setText(true);
+        }
+        return response;
     }
 
-    private List<ChatContent> getChatContent(Chat chat){
+    public List<ChatContent> getChatContent(Chat chat){
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
                 .toList();

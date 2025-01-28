@@ -1,8 +1,7 @@
 package ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import ua.everybuy.routing.dto.response.subresponse.SubResponseMarker;
 
 import java.time.LocalDateTime;
@@ -10,6 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MessageResponse implements SubResponseMarker, ChatContent {
     private Long id;
     private String text;
@@ -17,4 +18,10 @@ public class MessageResponse implements SubResponseMarker, ChatContent {
     private Long userId;
     private Long chatId;
     private String userPhotoUrl;
+
+    @Override
+    @JsonIgnore
+    public String getContent(){
+        return text;
+    }
 }

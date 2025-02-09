@@ -57,6 +57,16 @@ public class AwsS3Service {
         return fileUrl;
     }
 
+    public void deleteFile(String fileUrl) {
+        try{
+            String fileName = fileUrl.replace(urlFilePrefix, "");
+            s3Client.deleteObject(bucketName, fileName);
+            log.info("file was deleted from s3 {}", fileName);
+        }catch (AmazonServiceException e) {
+            log.error("Failed to delete file from S3: {}", e.getErrorMessage(), e);
+        }
+    }
+
     private void checkIfFileEmpty(MultipartFile file){
         if (file.isEmpty()){
             throw new FileNotPresentException();

@@ -18,6 +18,7 @@ public class FileResponse implements SubResponseMarker, ChatContent {
     private Long userId;
     private Long chatId;
     private String userPhotoUrl;
+    private boolean isActive;
 
     @Override
     @JsonIgnore

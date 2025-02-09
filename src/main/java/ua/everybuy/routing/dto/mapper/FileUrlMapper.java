@@ -29,6 +29,7 @@ public class FileUrlMapper {
                 .userId(fileUrl.getUserId())
                 .creationTime(fileUrl.getCreationTime())
                 .userPhotoUrl(userInfoService.getShortUserInfo(fileUrl.getUserId()).getData().photoUrl())
+                .isActive(fileUrl.isActive())
                 .build();
     }
 }

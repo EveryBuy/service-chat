@@ -24,5 +24,4 @@ public class FileControllerImpl implements FileController{
         return fileUrlService.saveFiles(chatId, files, principal);
     }
 
-
 }

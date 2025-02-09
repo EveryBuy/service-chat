@@ -1,11 +1,14 @@
 package ua.everybuy.buisnesslogic.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
+import ua.everybuy.buisnesslogic.service.util.DateService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.FileUrl;
@@ -15,10 +18,12 @@ import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileRe
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileUrlService {
     private final FileUrlRepository fileUrlRepository;
     private final AwsS3Service awsS3Service;
@@ -48,6 +53,19 @@ public class FileUrlService {
                     }
                 })
                 .toList();
+    }
+
+
+    @Scheduled(fixedRate = 60000)
+    public void cleanupOldFiles(){
+        LocalDateTime expirationTime = DateService.getDate(LocalDateTime.now().minusMinutes(5));
+        List <FileUrl> oldFiles = fileUrlRepository.findByCreationTimeBeforeAndIsActiveTrue(expirationTime);
+                oldFiles.forEach(fileUrl -> {
+                    fileUrl.setActive(false);
+                    fileUrlRepository.save(fileUrl);
+                    awsS3Service.deleteFile(fileUrl.getFileUrl());
+                });
+        log.info("Deleted {} old files", oldFiles.size());
     }
 
 //    private void createFileUrlMessage(long chatId, )

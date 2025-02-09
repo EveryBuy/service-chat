@@ -29,6 +29,9 @@ public class FileUrl implements Serializable {
     @Column(name = "file_url")
     private String fileUrl;
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;
@@ -36,5 +39,7 @@ public class FileUrl implements Serializable {
     @PrePersist
     public void onCreate(){
         this.creationTime = DateService.getDate(LocalDateTime.now());
+        this.isActive = true;
     }
+
 }

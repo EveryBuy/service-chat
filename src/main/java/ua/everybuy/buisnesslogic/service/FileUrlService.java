@@ -56,9 +56,9 @@ public class FileUrlService {
     }
 
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "0 0 3 * * ?")
     public void cleanupOldFiles(){
-        LocalDateTime expirationTime = DateService.getDate(LocalDateTime.now().minusMinutes(5));
+        LocalDateTime expirationTime = DateService.getDate(LocalDateTime.now().minusDays(10));
         List <FileUrl> oldFiles = fileUrlRepository.findByCreationTimeBeforeAndIsActiveTrue(expirationTime);
                 oldFiles.forEach(fileUrl -> {
                     fileUrl.setActive(false);
@@ -67,7 +67,4 @@ public class FileUrlService {
                 });
         log.info("Deleted {} old files", oldFiles.size());
     }
-
-//    private void createFileUrlMessage(long chatId, )
-
 }

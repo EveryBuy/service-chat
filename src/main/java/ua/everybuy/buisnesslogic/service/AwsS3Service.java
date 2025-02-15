@@ -37,14 +37,11 @@ public class AwsS3Service {
             throw new IOException("Bucket '" + bucketName + "' does not exist.");
         }
 
-        String fileName = UUID.randomUUID().toString();
-        String fileUrl = urlFilePrefix + fileName;
+        String fileUrl = generateFileUrl();
+        String fileName = extractFileNameFromUrl(fileUrl);
 
         try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-
+            ObjectMetadata metadata = createMetadata(file);
             s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
 
         } catch (AmazonServiceException e) {
@@ -59,7 +56,7 @@ public class AwsS3Service {
 
     public void deleteFile(String fileUrl) {
         try{
-            String fileName = fileUrl.replace(urlFilePrefix, "");
+            String fileName = extractFileNameFromUrl(fileUrl);
             s3Client.deleteObject(bucketName, fileName);
             log.info("file was deleted from s3 {}", fileName);
         }catch (AmazonServiceException e) {
@@ -81,6 +78,22 @@ public class AwsS3Service {
         if (!(mimeType.startsWith("image/") || mimeType.equals("application/pdf"))) {
             throw new FileFormatException();
         }
+    }
+
+    private String generateFileUrl(){
+        String fileName = UUID.randomUUID().toString();
+        return urlFilePrefix + fileName;
+    }
+
+    private String extractFileNameFromUrl(String fileUrl){
+        return fileUrl.replace(urlFilePrefix, "");
+    }
+
+    private ObjectMetadata createMetadata(MultipartFile file){
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+        return metadata;
     }
 
 }

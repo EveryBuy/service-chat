@@ -8,7 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ua.everybuy.buisnesslogic.service.MessageService;
+import ua.everybuy.buisnesslogic.service.message.MessageService;
 import ua.everybuy.routing.dto.request.MessageRequest;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 import java.security.Principal;

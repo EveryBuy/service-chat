@@ -18,6 +18,7 @@ public class MessageResponse implements SubResponseMarker, ChatContent {
     private Long userId;
     private Long chatId;
     private String userPhotoUrl;
+    private boolean isRead;
 
     @Override
     @JsonIgnore

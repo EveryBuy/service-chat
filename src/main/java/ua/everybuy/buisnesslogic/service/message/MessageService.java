@@ -1,4 +1,4 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.message;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,6 +46,4 @@ public class MessageService {
             throw new UserNotInChatException(userId, chat.getId());
         }
     }
-
-
 }

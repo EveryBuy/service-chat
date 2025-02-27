@@ -27,6 +27,9 @@ public class Message implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "is_read")
+    private boolean isRead;
+
     @ManyToOne
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
+import ua.everybuy.buisnesslogic.service.message.ReadContentService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.repository.ChatRepository;
@@ -28,6 +29,7 @@ public class ChatService {
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
     private final ChatValidateService chatValidateService;
+    private final ReadContentService readContentService;
 
     public StatusResponse createChat(Long advertisementId, Principal principal) {
         ShortAdvertisementInfoDto advertisementInfo =
@@ -49,7 +51,6 @@ public class ChatService {
 
     public StatusResponse getChat(Long chatId, Principal principal) {
         Chat chat = getChatByIdAndUserId(chatId, principal);
-        long advertisementId = chat.getAdvertisementId();
         long checkingUserId = PrincipalConvertor.extractPrincipalId(principal);
         long checkedUserId = getSecondChatMember(checkingUserId, chat);
         boolean isAnotherUserBlocked = blackListValidateService.isUserInBlackList(checkingUserId, checkedUserId);
@@ -58,11 +59,12 @@ public class ChatService {
         ShortAdvertisementInfoDto shortAdvertisementInfo;
         try {
             shortAdvertisementInfo = advertisementInfoService
-                    .getShortAdvertisementInfo(advertisementId);
+                    .getShortAdvertisementInfo(chat.getAdvertisementId());
         } catch (AdvertisementException ex) {
             shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
         }
         String section = getChatSection(chat, checkingUserId);
+        readContentService.markContentAsRead(chatId, checkedUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
                 .mapChatToChatResponse(isAnotherUserBlocked, isCurrentlyUserBlocked, chat, userData, shortAdvertisementInfo, section));
     }

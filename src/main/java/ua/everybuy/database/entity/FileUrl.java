@@ -32,6 +32,9 @@ public class FileUrl implements Serializable {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @Column(name = "is_read")
+    private boolean isRead;
+
     @ManyToOne
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;

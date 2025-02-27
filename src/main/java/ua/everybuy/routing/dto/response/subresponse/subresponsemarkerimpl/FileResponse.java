@@ -19,10 +19,14 @@ public class FileResponse implements SubResponseMarker, ChatContent {
     private Long chatId;
     private String userPhotoUrl;
     private boolean isActive;
+    private boolean isRead;
 
     @Override
     @JsonIgnore
     public String getContent(){
         return fileUrl;
     }
+
+
+
 }

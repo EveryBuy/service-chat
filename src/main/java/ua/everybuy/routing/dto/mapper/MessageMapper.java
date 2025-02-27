@@ -20,6 +20,7 @@ public class MessageMapper {
                 .userId(message.getUserId())
                 .chatId(message.getChat().getId())
                 .userPhotoUrl(userInfoService.getShortUserInfo(message.getUserId()).getData().photoUrl())
+                .isRead(message.isRead())
                 .build();
     }
 

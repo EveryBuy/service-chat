@@ -3,6 +3,7 @@ package ua.everybuy.buisnesslogic.service.message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
+import ua.everybuy.buisnesslogic.service.chat.ArchiveChatService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
@@ -22,19 +23,21 @@ public class MessageService {
     private final ChatService chatService;
     private final BlackListValidateService blackListValidateService;
     private final MessageMapper messageMapper;
+    private final ArchiveChatService archiveChatService;
 
     public MessageResponse createMessage(long chatId, MessageRequest messageRequest, Principal principal){
-        validateMessageSendingPermission(chatId, principal);
+        validateMessageSendingPermission(chatId);
         Chat chat = chatService.findChatById(chatId);
         long userId = PrincipalConvertor.extractPrincipalId(principal);
         checkUserMembershipInChat(userId, chat);
         Message message = messageMapper.convertRequestToMessage(messageRequest, userId, chat);
         chatService.updateChat(chat);
         messageRepository.save(message);
+        archiveChatService.deleteChatFromArchiveIfMessageReceived(chatService.getSecondChatMember(userId, chat), chat);
         return messageMapper.convertMessageToResponse(message);
     }
 
-    private void validateMessageSendingPermission(long chatId, Principal principal){
+    private void validateMessageSendingPermission(long chatId){
         Chat chat = chatService.findChatById(chatId);
         long sellerId = chat.getAdOwnerId();
         long buyerId = chat.getInitiatorId();
@@ -46,4 +49,5 @@ public class MessageService {
             throw new UserNotInChatException(userId, chat.getId());
         }
     }
+
 }

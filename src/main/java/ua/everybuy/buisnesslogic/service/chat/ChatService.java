@@ -56,13 +56,7 @@ public class ChatService {
         boolean isAnotherUserBlocked = blackListValidateService.isUserInBlackList(checkingUserId, checkedUserId);
         boolean isCurrentlyUserBlocked = blackListValidateService.isUserInBlackList(checkedUserId, checkingUserId);
         ShortUserInfoDto userData = userInfoService.getShortUserInfo(checkedUserId).getData();
-        ShortAdvertisementInfoDto shortAdvertisementInfo;
-        try {
-            shortAdvertisementInfo = advertisementInfoService
-                    .getShortAdvertisementInfo(chat.getAdvertisementId());
-        } catch (AdvertisementException ex) {
-            shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
-        }
+        ShortAdvertisementInfoDto shortAdvertisementInfo = getShortAdInfo(chat);
         String section = getChatSection(chat, checkingUserId);
         readContentService.markContentAsRead(chatId, checkedUserId);
         return new StatusResponse(HttpStatus.OK.value(), chatMapper
@@ -85,6 +79,10 @@ public class ChatService {
 
     public Chat getChatByIdAndUserId(long chatId, Principal principal) {
         long userId = PrincipalConvertor.extractPrincipalId(principal);
+        return getChatByIdAndUserId(chatId, userId);
+    }
+
+    public Chat getChatByIdAndUserId(long chatId, long userId) {
         return chatRepository.findChatByIdAndUserId(chatId, userId)
                 .orElseThrow(() -> new ChatNotFoundException(chatId, userId));
     }
@@ -96,6 +94,17 @@ public class ChatService {
 
     public long getSecondChatMember(long checkingUserId, Chat chat) {
         return checkingUserId == chat.getAdOwnerId() ? chat.getInitiatorId() : chat.getAdOwnerId();
+    }
+
+    private ShortAdvertisementInfoDto getShortAdInfo(Chat chat){
+        ShortAdvertisementInfoDto shortAdvertisementInfo;
+        try {
+            shortAdvertisementInfo = advertisementInfoService
+                    .getShortAdvertisementInfo(chat.getAdvertisementId());
+        } catch (AdvertisementException ex) {
+            shortAdvertisementInfo = ShortAdvertisementInfoDto.builder().title(ex.getMessage()).build();
+        }
+        return shortAdvertisementInfo;
     }
 
 }

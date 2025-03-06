@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
+import ua.everybuy.buisnesslogic.service.message.ReadContentService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
+import ua.everybuy.database.entity.ArchiveChat;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.Message;
+import ua.everybuy.database.repository.ArchiveChatRepository;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
@@ -26,23 +28,32 @@ public class ChatListingService {
     private final ChatMapper chatMapper;
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
+    private final ArchiveChatRepository archiveChatRepository;
+    private final ReadContentService readContentService;
 
-    public List<ChatResponseForList> getAllUsersChats(Principal principal) {
+    public List<ChatResponseForList> getUsersChatsBySection(Principal principal, String section) {
         long userId = PrincipalConvertor.extractPrincipalId(principal);
+        List<Chat> archiveChats = getUsersArchiveChats(userId);
         return chatService.getAllUserChatsByDateDesc(userId)
                 .stream()
+                .filter(chat -> section.equals(chatService.getChatSection(chat, userId)))
+                .filter(chat -> !archiveChats.contains(chat))
                 .map(chat -> mapChatForList(chat, userId))
                 .collect(Collectors.toList());
     }
 
     public ChatResponseForList mapChatForList(Chat chat, long userId) {
+        long secondChatMemberId = chatService.getSecondChatMember(userId, chat);
         ShortUserInfoDto userInfo = userInfoService
-                .getShortUserInfo(chatService.getSecondChatMember(userId, chat)).getData();
+                .getShortUserInfo(secondChatMemberId).getData();
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
                 .getShortAdvertisementInfo(chat.getAdvertisementId());
         String section = chatService.getChatSection(chat, userId);
         ChatContent latestContent = getLastChatMessage(chat);
-        return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent, section, adInfo.getIsEnabled());
+        long unreadContentCount = readContentService.getUnreadContentCount(chat.getId(), secondChatMemberId);
+        boolean isRead = readContentService.isLastMessageRead(latestContent, userId);
+        return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent, section, adInfo.getIsEnabled(),
+                unreadContentCount, isRead);
     }
 
     private ChatContent getLastChatMessage(Chat chat){
@@ -53,9 +64,10 @@ public class ChatListingService {
 
     }
 
-    public List<ChatResponseForList> getUsersChatsBySection(Principal principal, String section) {
-        return getAllUsersChats(principal).stream()
-                .filter(chat -> chat.getSection().equalsIgnoreCase(section))
+    private List<Chat> getUsersArchiveChats(long userId){
+        return archiveChatRepository.findArchiveChatsByUserId(userId)
+                .stream()
+                .map(ArchiveChat::getChat)
                 .toList();
     }
 

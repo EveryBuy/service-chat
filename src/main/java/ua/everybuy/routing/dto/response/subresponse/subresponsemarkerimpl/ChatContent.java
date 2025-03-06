@@ -8,4 +8,5 @@ public interface ChatContent extends SubResponseMarker {
     LocalDateTime getCreationTime();
     String getContent();
     boolean isRead();
+    Long getUserId();
 }

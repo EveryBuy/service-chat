@@ -25,7 +25,7 @@ public class ArchiveChatService {
 
     public StatusResponse addChatToArchive(long chatId, Principal principal){
         Chat chat = chatService.getChatByIdAndUserId(chatId, principal);
-        long userId = extractUserId(principal);
+        long userId = PrincipalConvertor.extractPrincipalId(principal);
         if (archiveChatRepository.existsByUserIdAndChat(userId, chat)) {
             throw new ArchiveChatAlreadyExistsException(chatId, userId);
         }
@@ -34,13 +34,8 @@ public class ArchiveChatService {
 
     }
 
-    private long extractUserId(Principal principal){
-        return Long.parseLong(principal.getName());
-    }
-
-    public void deleteChatFromArchive(long chatId, Principal principal){
-        Chat chat = chatService.getChatByIdAndUserId(chatId, principal);
-        long userId = extractUserId(principal);
+    public void deleteChatFromArchive(long chatId, long userId){
+        Chat chat = chatService.getChatByIdAndUserId(chatId, userId);
         ArchiveChat archiveChatByUserIdAndChatId = findByChatAndUserId(userId, chat);
         archiveChatRepository.delete(archiveChatByUserIdAndChatId);
     }
@@ -62,5 +57,13 @@ public class ArchiveChatService {
                 .toList();
     }
 
+    public boolean existsByUserIdAndChat(long userId, Chat chat){
+        return archiveChatRepository.existsByUserIdAndChat(userId, chat);
+    }
 
+    public void deleteChatFromArchiveIfMessageReceived(long userId, Chat chat){
+        if (existsByUserIdAndChat(userId, chat)){
+            deleteChatFromArchive(chat.getId(), userId);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import ua.everybuy.database.entity.FileUrl;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.database.repository.FileUrlRepository;
 import ua.everybuy.database.repository.MessageRepository;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatContent;
 
 import java.util.List;
 
@@ -36,6 +37,22 @@ public class ReadContentService {
     private void updateFileUrl(FileUrl fileUrl){
         fileUrl.setRead(true);
         fileUrlRepository.save(fileUrl);
+    }
+
+    public long getUnreadContentCount(long chatId, long userId){
+        return messageRepository.countUnreadMessages(chatId, userId, false)
+                + fileUrlRepository.countUnreadMessages(chatId, userId, false);
+    }
+
+
+    public boolean isLastMessageRead(ChatContent chatContent, long userId){
+        if (chatContent.getUserId() == null){
+            return false;
+        }
+        if (chatContent.getUserId() != userId){
+            return true;
+        }
+        return chatContent.isRead();
     }
 
 }

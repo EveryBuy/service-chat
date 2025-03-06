@@ -2,6 +2,7 @@ package ua.everybuy.routing.dto.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ua.everybuy.buisnesslogic.service.message.ReadContentService;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
@@ -66,7 +67,9 @@ public class ChatMapper {
                                                         ShortUserInfoDto userData,
                                                         ChatContent chatContent,
                                                         String section,
-                                                        boolean isEnabled) {
+                                                        boolean isEnabled,
+                                                        long unReadContentCount,
+                                                        boolean isRead) {
 
         ChatResponseForList response = ChatResponseForList.builder()
                 .chatId(chat.getId())
@@ -75,6 +78,8 @@ public class ChatMapper {
                 .lastMessageDate(chat.getUpdateDate())
                 .section(section)
                 .isAdvertisementActive(isEnabled)
+                .unreadMessagesCount(unReadContentCount)
+                .isRead(isRead)
                 .build();
         if (chatContent.getClass().equals(MessageResponse.class)){
             response.setText(true);

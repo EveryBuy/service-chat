@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.everybuy.buisnesslogic.service.chat.ArchiveChatService;
+import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.routing.controler.chat.ArchiveChatController;
 import ua.everybuy.routing.dto.response.StatusResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
@@ -29,7 +30,7 @@ public class ArchiveChatControllerImpl implements ArchiveChatController {
     @DeleteMapping("/remove-from-archive")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeChatFromArchive(@RequestParam(name = "chatId") Long chatId, Principal principal){
-        archiveChatService.deleteChatFromArchive(chatId, principal);
+        archiveChatService.deleteChatFromArchive(chatId, PrincipalConvertor.extractPrincipalId(principal));
 
     }
 

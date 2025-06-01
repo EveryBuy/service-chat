@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageResponse implements SubResponseMarker, ChatContent {
+public class MessageResponse implements SubResponseMarker, ChatContentResponse {
     private Long id;
     private String text;
     private LocalDateTime creationTime;

@@ -3,7 +3,6 @@ package ua.everybuy.routing.dto.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.*;
@@ -64,25 +63,29 @@ public class ChatMapper {
 
     public ChatResponseForList mapToChatResponseForList(Chat chat,
                                                         ShortUserInfoDto userData,
-                                                        ChatContent chatContent,
+                                                        ChatContentResponse chatContentResponse,
                                                         String section,
-                                                        boolean isEnabled) {
+                                                        boolean isEnabled,
+                                                        boolean isAnotherUserBlocked,
+                                                        boolean isCurrentlyUserBlocked) {
 
         ChatResponseForList response = ChatResponseForList.builder()
                 .chatId(chat.getId())
                 .userData(userData)
-                .lastMessage(chatContent.getContent())
+                .lastMessage(chatContentResponse.getContent())
                 .lastMessageDate(chat.getUpdateDate())
                 .section(section)
                 .isAdvertisementActive(isEnabled)
+                .isAnotherUserBlocked(isAnotherUserBlocked)
+                .isCurrentlyUserBlocked(isCurrentlyUserBlocked)
                 .build();
-        if (chatContent.getClass().equals(MessageResponse.class)){
+        if (chatContentResponse.getClass().equals(MessageResponse.class)){
             response.setText(true);
         }
         return response;
     }
 
-    public List<ChatContent> getChatContent(Chat chat){
+    public List<ChatContentResponse> getChatContent(Chat chat){
         List<MessageResponse> messageResponses = chat.getMessages().stream()
                 .map(messageMapper::convertMessageToResponse)
                 .toList();
@@ -94,7 +97,7 @@ public class ChatMapper {
        return Stream.concat(
                         messageResponses.stream(),
                         fileResponses.stream()
-                ).sorted(Comparator.comparing(ChatContent::getCreationTime))
+                ).sorted(Comparator.comparing(ChatContentResponse::getCreationTime))
                 .toList();
     }
 

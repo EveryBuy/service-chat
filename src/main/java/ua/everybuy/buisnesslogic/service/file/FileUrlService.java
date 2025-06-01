@@ -1,4 +1,4 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.file;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.DateService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.FileUrl;
+import ua.everybuy.database.entity.chatcontent.FileUrl;
 import ua.everybuy.database.repository.FileUrlRepository;
 import ua.everybuy.routing.dto.mapper.FileUrlMapper;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
@@ -53,6 +53,10 @@ public class FileUrlService {
                     }
                 })
                 .toList();
+    }
+
+    public List<String> findAllFilesUrls(){
+        return fileUrlRepository.findAll().stream().map(FileUrl::getFileUrl).toList();
     }
 
 

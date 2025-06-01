@@ -2,8 +2,8 @@ package ua.everybuy.buisnesslogic.service.message;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.everybuy.database.entity.FileUrl;
-import ua.everybuy.database.entity.Message;
+import ua.everybuy.database.entity.chatcontent.FileUrl;
+import ua.everybuy.database.entity.chatcontent.Message;
 import ua.everybuy.database.repository.FileUrlRepository;
 import ua.everybuy.database.repository.MessageRepository;
 

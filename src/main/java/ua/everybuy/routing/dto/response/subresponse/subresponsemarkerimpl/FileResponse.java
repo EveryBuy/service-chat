@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class FileResponse implements SubResponseMarker, ChatContent {
+public class FileResponse implements SubResponseMarker, ChatContentResponse {
     private Long id;
     private String fileUrl;
     private LocalDateTime creationTime;

@@ -3,6 +3,8 @@ package ua.everybuy.database.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import ua.everybuy.buisnesslogic.service.util.DateService;
+import ua.everybuy.database.entity.chatcontent.FileUrl;
+import ua.everybuy.database.entity.chatcontent.Message;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

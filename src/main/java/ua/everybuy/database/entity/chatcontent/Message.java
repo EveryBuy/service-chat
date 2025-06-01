@@ -1,8 +1,9 @@
-package ua.everybuy.database.entity;
+package ua.everybuy.database.entity.chatcontent;
 
 import jakarta.persistence.*;
 import lombok.*;
 import ua.everybuy.buisnesslogic.service.util.DateService;
+import ua.everybuy.database.entity.Chat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message implements Serializable {
+public class Message implements Serializable, ChatContent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

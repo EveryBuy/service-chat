@@ -2,15 +2,15 @@ package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.Message;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
-import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatContent;
+import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatContentResponse;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.ChatResponseForList;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.MessageResponse;
 
@@ -26,6 +26,7 @@ public class ChatListingService {
     private final ChatMapper chatMapper;
     private final UserInfoService userInfoService;
     private final AdvertisementInfoService advertisementInfoService;
+    private final BlackListValidateService blackListValidateService;
 
     public List<ChatResponseForList> getAllUsersChats(Principal principal) {
         long userId = PrincipalConvertor.extractPrincipalId(principal);
@@ -36,19 +37,23 @@ public class ChatListingService {
     }
 
     public ChatResponseForList mapChatForList(Chat chat, long userId) {
+        long anotherChatMemberId = chatService.getSecondChatMember(userId, chat);
         ShortUserInfoDto userInfo = userInfoService
                 .getShortUserInfo(chatService.getSecondChatMember(userId, chat)).getData();
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
                 .getShortAdvertisementInfo(chat.getAdvertisementId());
         String section = chatService.getChatSection(chat, userId);
-        ChatContent latestContent = getLastChatMessage(chat);
-        return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent, section, adInfo.getIsEnabled());
+        ChatContentResponse latestContent = getLastChatMessage(chat);
+        boolean isAnotherUserBlocked = blackListValidateService.isUserInBlackList(userId, anotherChatMemberId);
+        boolean isCurrentlyUserBlocked = blackListValidateService.isUserInBlackList(anotherChatMemberId, userId);
+        return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent,
+                section, adInfo.getIsEnabled(), isAnotherUserBlocked, isCurrentlyUserBlocked);
     }
 
-    private ChatContent getLastChatMessage(Chat chat){
+    private ChatContentResponse getLastChatMessage(Chat chat){
         return chatMapper.getChatContent(chat)
                 .stream()
-                .max(Comparator.comparing(ChatContent::getCreationTime))
+                .max(Comparator.comparing(ChatContentResponse::getCreationTime))
                 .orElse(new MessageResponse());
 
     }

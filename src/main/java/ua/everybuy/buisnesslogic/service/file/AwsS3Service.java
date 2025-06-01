@@ -1,4 +1,4 @@
-package ua.everybuy.buisnesslogic.service;
+package ua.everybuy.buisnesslogic.service.file;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;

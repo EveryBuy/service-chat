@@ -26,5 +26,5 @@ public class ChatResponse implements SubResponseMarker, Serializable {
     private long adOwnerId;
     private ShortUserInfoDto userData;
     private ShortAdvertisementInfoDto shortAdvertisementInfo;
-    private List<ChatContent> chatMessages;
+    private List<ChatContentResponse> chatMessages;
 }

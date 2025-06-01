@@ -6,7 +6,7 @@ import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.chat.ChatService;
 import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.Message;
+import ua.everybuy.database.entity.chatcontent.Message;
 import ua.everybuy.database.repository.MessageRepository;
 import ua.everybuy.errorhandling.exceptions.subexceptionimpl.UserNotInChatException;
 import ua.everybuy.routing.dto.mapper.MessageMapper;

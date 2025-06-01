@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.database.entity.Chat;
-import ua.everybuy.database.entity.FileUrl;
+import ua.everybuy.database.entity.chatcontent.FileUrl;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
 
 @Component

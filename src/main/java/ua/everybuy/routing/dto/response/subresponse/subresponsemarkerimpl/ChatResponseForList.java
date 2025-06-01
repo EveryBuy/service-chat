@@ -18,4 +18,6 @@ public class ChatResponseForList {
     private boolean isText;
     private LocalDateTime lastMessageDate;
     private String section;
+    private boolean isAnotherUserBlocked;
+    private boolean isCurrentlyUserBlocked;
 }

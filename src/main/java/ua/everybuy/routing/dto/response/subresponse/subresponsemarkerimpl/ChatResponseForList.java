@@ -20,4 +20,6 @@ public class ChatResponseForList {
     private String section;
     private boolean isRead;
     private long unreadMessagesCount;
+    private boolean isCurrentlyUserBlocked;
+    private boolean isAnotherUserBlocked;
 }

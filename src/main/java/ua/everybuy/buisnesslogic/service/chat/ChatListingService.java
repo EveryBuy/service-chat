@@ -2,6 +2,7 @@ package ua.everybuy.buisnesslogic.service.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.everybuy.buisnesslogic.service.blacklist.BlackListValidateService;
 import ua.everybuy.buisnesslogic.service.integration.AdvertisementInfoService;
 import ua.everybuy.buisnesslogic.service.integration.UserInfoService;
 import ua.everybuy.buisnesslogic.service.message.ReadContentService;
@@ -30,6 +31,7 @@ public class ChatListingService {
     private final AdvertisementInfoService advertisementInfoService;
     private final ArchiveChatRepository archiveChatRepository;
     private final ReadContentService readContentService;
+    private final BlackListValidateService blackListValidateService;
 
     public List<ChatResponseForList> getUsersChatsBySection(Principal principal, String section) {
         long userId = PrincipalConvertor.extractPrincipalId(principal);
@@ -44,6 +46,8 @@ public class ChatListingService {
 
     public ChatResponseForList mapChatForList(Chat chat, long userId) {
         long secondChatMemberId = chatService.getSecondChatMember(userId, chat);
+        boolean isAnotherUserBlocked = blackListValidateService.isUserInBlackList(userId, secondChatMemberId);
+        boolean isCurrentlyUserBlocked = blackListValidateService.isUserInBlackList(secondChatMemberId, userId);
         ShortUserInfoDto userInfo = userInfoService
                 .getShortUserInfo(secondChatMemberId).getData();
         ShortAdvertisementInfoDto adInfo = advertisementInfoService
@@ -53,7 +57,7 @@ public class ChatListingService {
         long unreadContentCount = readContentService.getUnreadContentCount(chat.getId(), secondChatMemberId);
         boolean isRead = readContentService.isLastMessageRead(latestContent, userId);
         return chatMapper.mapToChatResponseForList(chat, userInfo, latestContent, section, adInfo.getIsEnabled(),
-                unreadContentCount, isRead);
+                unreadContentCount, isRead, isAnotherUserBlocked, isCurrentlyUserBlocked);
     }
 
     private ChatContent getLastChatMessage(Chat chat){

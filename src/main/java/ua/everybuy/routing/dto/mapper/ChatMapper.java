@@ -69,7 +69,9 @@ public class ChatMapper {
                                                         String section,
                                                         boolean isEnabled,
                                                         long unReadContentCount,
-                                                        boolean isRead) {
+                                                        boolean isRead,
+                                                        boolean isAnotherUserBlocked,
+                                                        boolean isCurrentlyUserBlocked) {
 
         ChatResponseForList response = ChatResponseForList.builder()
                 .chatId(chat.getId())
@@ -80,6 +82,8 @@ public class ChatMapper {
                 .isAdvertisementActive(isEnabled)
                 .unreadMessagesCount(unReadContentCount)
                 .isRead(isRead)
+                .isAnotherUserBlocked(isAnotherUserBlocked)
+                .isCurrentlyUserBlocked(isCurrentlyUserBlocked)
                 .build();
         if (chatContent.getClass().equals(MessageResponse.class)){
             response.setText(true);

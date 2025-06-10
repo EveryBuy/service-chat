@@ -10,6 +10,7 @@ import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.ArchiveChat;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.repository.ArchiveChatRepository;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.AdvertisementException;
 import ua.everybuy.routing.dto.external.model.ShortAdvertisementInfoDto;
 import ua.everybuy.routing.dto.external.model.ShortUserInfoDto;
 import ua.everybuy.routing.dto.mapper.ChatMapper;
@@ -50,8 +51,7 @@ public class ChatListingService {
         boolean isCurrentlyUserBlocked = blackListValidateService.isUserInBlackList(secondChatMemberId, userId);
         ShortUserInfoDto userInfo = userInfoService
                 .getShortUserInfo(secondChatMemberId).getData();
-        ShortAdvertisementInfoDto adInfo = advertisementInfoService
-                .getShortAdvertisementInfo(chat.getAdvertisementId());
+        ShortAdvertisementInfoDto adInfo = getShortAdvertisementInfo(chat.getAdvertisementId());
         String section = chatService.getChatSection(chat, userId);
         ChatContent latestContent = getLastChatMessage(chat);
         long unreadContentCount = readContentService.getUnreadContentCount(chat.getId(), secondChatMemberId);
@@ -73,6 +73,24 @@ public class ChatListingService {
                 .stream()
                 .map(ArchiveChat::getChat)
                 .toList();
+    }
+
+    private ShortAdvertisementInfoDto getShortAdvertisementInfo(long advertisementId){
+        ShortAdvertisementInfoDto adInfo;
+        try{
+            adInfo = advertisementInfoService.getShortAdvertisementInfo(advertisementId);
+        } catch (AdvertisementException adEx){
+            adInfo = ShortAdvertisementInfoDto
+                    .builder()
+                    .price("unknown")
+                    .section("unknown")
+                    .id(advertisementId)
+                    .title("unknown")
+                    .mainPhotoUrl("unknown")
+                    .isEnabled(false)
+                    .build();
+        }
+        return adInfo;
     }
 
 }

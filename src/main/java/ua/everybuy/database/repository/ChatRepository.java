@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     boolean existsChatByAdvertisementIdAndInitiatorIdAndAdOwnerId(long advertisementId, long initiatorId, long adOwnerId);
+    Chat findChatByAdvertisementIdAndInitiatorIdAndAdOwnerId(long advertisementId, long initiatorId, long adOwnerId);
     @Query("""
     SELECT c FROM Chat c
     LEFT JOIN FETCH c.messages

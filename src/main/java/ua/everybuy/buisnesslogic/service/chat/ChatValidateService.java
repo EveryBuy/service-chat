@@ -36,7 +36,8 @@ public class ChatValidateService {
                 adOwnerId);
 
         if (isPresent) {
-            throw new ChatAlreadyExistsException();
+            long chatId = chatRepository.findChatByAdvertisementIdAndInitiatorIdAndAdOwnerId(advertisementId, initiatorId, adOwnerId).getId();
+            throw new ChatAlreadyExistsException(chatId);
         }
     }
 

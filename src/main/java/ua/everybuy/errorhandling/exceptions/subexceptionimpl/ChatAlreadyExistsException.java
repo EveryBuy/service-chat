@@ -4,8 +4,9 @@ import org.springframework.http.HttpStatus;
 import ua.everybuy.errorhandling.exceptions.SubException;
 
 public class ChatAlreadyExistsException extends SubException {
-    public ChatAlreadyExistsException(){
-        super("Chat already exists");
+
+    public ChatAlreadyExistsException(long chatId){
+        super("Chat already exists. id:" + chatId);
     }
 
     @Override

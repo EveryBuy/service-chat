@@ -20,7 +20,6 @@ public class UserInfoService {
 
     @Cacheable(key = "#userId", value = "userInfo")
     public UserStatusResponse getShortUserInfo(long userId) {
-//        System.out.println("inside getShortUserInfo method cache doesn't work");
         return extractUserInfo(userId);
     }
 

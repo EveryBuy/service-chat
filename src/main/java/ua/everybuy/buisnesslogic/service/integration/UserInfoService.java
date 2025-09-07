@@ -39,6 +39,9 @@ public class UserInfoService {
         } catch (HttpStatusCodeException e) {
             throwExceptionIfUserNotFound(e.getStatusCode(), userId);
             throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return statusResponse;
     }

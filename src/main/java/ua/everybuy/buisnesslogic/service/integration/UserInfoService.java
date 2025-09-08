@@ -2,7 +2,6 @@ package ua.everybuy.buisnesslogic.service.integration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class UserInfoService {
     @Value("${user.service.url}")
     private String userInfoUrl;
 
-    @Cacheable(key = "#userId", value = "userInfo")
     public UserStatusResponse getShortUserInfo(long userId) {
         return extractUserInfo(userId);
     }
@@ -39,9 +37,6 @@ public class UserInfoService {
         } catch (HttpStatusCodeException e) {
             throwExceptionIfUserNotFound(e.getStatusCode(), userId);
             throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
         return statusResponse;
     }

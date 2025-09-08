@@ -2,10 +2,11 @@ package ua.everybuy.routing.dto.external.model;
 
 
 import java.io.Serializable;
+import java.util.Date;
 
 public record ShortUserInfoDto(long userId,
                                String fullName,
                                String photoUrl,
                                boolean isOnline,
-                               String lastActivity) implements Serializable {
+                               Date lastActivity) implements Serializable {
 }

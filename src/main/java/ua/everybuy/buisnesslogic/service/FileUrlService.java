@@ -13,6 +13,7 @@ import ua.everybuy.buisnesslogic.service.util.PrincipalConvertor;
 import ua.everybuy.database.entity.Chat;
 import ua.everybuy.database.entity.FileUrl;
 import ua.everybuy.database.repository.FileUrlRepository;
+import ua.everybuy.errorhandling.exceptions.subexceptionimpl.ToLargeContentException;
 import ua.everybuy.routing.dto.mapper.FileUrlMapper;
 import ua.everybuy.routing.dto.response.subresponse.subresponsemarkerimpl.FileResponse;
 
@@ -44,6 +45,7 @@ public class FileUrlService {
 
     @Transactional
     public List<FileResponse> saveFiles (long chatId, List<MultipartFile> files, Principal principal){
+        checkFilesSizeAndQuantity(files);
         return files.stream()
                 .map(file -> {
                     try {
@@ -66,5 +68,18 @@ public class FileUrlService {
                     awsS3Service.deleteFile(fileUrl.getFileUrl());
                 });
         log.info("Deleted {} old files", oldFiles.size());
+    }
+
+    private void checkFilesSizeAndQuantity(List<MultipartFile> files){
+        if(files.size() > 6){
+            throw new ToLargeContentException();
+        }
+        files.forEach(this::checkFileSize);
+    }
+
+    private void checkFileSize(MultipartFile file){
+        if(file.getSize() > 5 * 1024 * 1024){
+            throw new ToLargeContentException();
+        }
     }
 }
